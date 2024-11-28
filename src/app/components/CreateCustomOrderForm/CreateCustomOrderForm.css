@@ -1,0 +1,29 @@
+.awb-number {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  padding: 5px;
+  border: 1px solid #f8f6f2;
+  border-radius: 5px;
+  margin: 5px;
+  position: relative;
+}
+
+.awb-number .remove-text {
+  position: absolute;
+  visibility: hidden;
+  color: rgb(206, 9, 9);
+}
+
+.awb-number .number {
+  visibility: visible;
+}
+
+.awb-number:hover .remove-text {
+  visibility: visible;
+}
+
+.awb-number:hover .number {
+  visibility: hidden;
+}

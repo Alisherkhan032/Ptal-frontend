@@ -1,0 +1,11 @@
+/* Add this CSS to your stylesheet */
+.scrollWidth::-webkit-scrollbar {
+  width: 10px; /* adjust width as needed */
+  background-color: gray;
+}
+
+/* For Firefox */
+.scrollWidth {
+  scrollbar-width: thin; /* adjust width as needed */
+   /* thumb color, track color */
+}
