@@ -33,7 +33,7 @@ const page = () => {
   }, []);
 
   return (
-    <div className="flex flex-col w-[78vw]">
+    <div className="flex flex-col text-black w-[78vw]">
       <div className="flex flex-col  w-[77vw] ">
         <div>
           <PageTitle pageTitle={'Raise vendor PO'} />

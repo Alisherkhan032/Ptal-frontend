@@ -117,7 +117,7 @@ const Page = () => {
       <div className="flex flex-col items-center w-[53vw] h-full">
         <div className=" flex flex-col mt-[6vw] items-center w-[32vw] h-full ">
           <div className="flex flex-col items-center gap-[0.5vw] w-full ">
-            <span className="text-[1.8vw] font-medium ">
+            <span className="text-[1.8vw] text-black font-medium ">
               Sign In to Fillflow IMS
             </span>
             <span className="text-[1.2vw] text-[rgb(181,176,161)]  font-semibold">
@@ -131,7 +131,7 @@ const Page = () => {
             onSubmit={handleSubmit}
           >
             <div className="flex flex-col w-full ">
-              <label className="text-[1.1vw] font-medium">Warehouse</label>
+              <label className="text-[1.1vw]  text-black font-medium">Warehouse</label>
               <Dropdown
                 bgColor={"#F8F6F2"}
                 options={options}
@@ -141,7 +141,7 @@ const Page = () => {
               />
             </div>
             <div className="flex flex-col w-full">
-              <label className="text-[1.1vw] font-medium">Email</label>
+              <label className="text-[1.1vw] text-black font-medium">Email</label>
               <Input
                 bgColor={"bg-[#F8F6F2]"}
                 radius={"rounded-lg"}
@@ -162,7 +162,7 @@ const Page = () => {
               )}
             </div>
             <div className="flex flex-col w-full">
-              <label className="text-[1.1vw] font-medium">Password</label>
+              <label className="text-[1.1vw] text-black font-medium">Password</label>
               <Input
                 bgColor={"bg-[#F8F6F2]"}
                 radius={"rounded-lg"}

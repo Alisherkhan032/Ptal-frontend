@@ -21,7 +21,7 @@ const CalenderFilter = ({ onFilterChange }) => {
   };
 
   return (
-    <div className="mt-12 flex justify-center items-center gap-x-3">
+    <div className="mt-12 flex justify-center text-black items-center gap-x-3">
       <input
         type="date"
         className="border cursor-pointer border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-gray-400"

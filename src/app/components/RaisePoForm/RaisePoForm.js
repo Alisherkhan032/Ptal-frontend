@@ -208,7 +208,7 @@ const RaisePoForm = () => {
   };
 
   return (
-    <div className="h-[78vh]  min-h-[78vh] max-h-[78vh] overflow-y-scroll">
+    <div className="h-[78vh]  min-h-[78vh] max-h-[78vh] text-black overflow-y-scroll">
       <ToastContainer />
       <div className="flex flex-col">
         <label>Vendor</label>

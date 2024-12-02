@@ -9,7 +9,7 @@ export const items = [
   // procuremennt team
   {
     id: 1,
-    label: "Procurement Team",
+    label: "Procurement",
     iconKey: "procurement",
     path: "/procurement/raise_vendor_po",
   },
@@ -17,8 +17,9 @@ export const items = [
   // storage team
   {
     id: 2,
-    label: "Storage Team",
+    label: "Storage",
     iconKey: "storage",
+    path: "/storage/inward_procurement_po",
     subItems: [
       {
         id: 21,
@@ -66,7 +67,7 @@ export const items = [
   // assembly team
   {
     id: 3,
-    label: "Assembly Team",
+    label: "Assembly",
     iconKey: "assembly",
     subItems: [
       {
@@ -109,7 +110,7 @@ export const items = [
   // inventory Team
   {
     id: 4,
-    label: "Inventory Team",
+    label: "Inventory",
     iconKey: "inventory",
     subItems: [
       {
@@ -153,7 +154,7 @@ export const items = [
     // Engraving Team
     {
       id: 10,
-      label: "Engraving Team",
+      label: "Engraving",
       iconKey: "engraving",
       subItems: [
         {
@@ -173,7 +174,7 @@ export const items = [
   // dispatch team
   {
     id: 5,
-    label: "Dispatch Team",
+    label: "Dispatch",
     iconKey: "dispatch",
     subItems: [
       // {
@@ -234,7 +235,7 @@ export const items = [
   // report team
   {
     id: 6,
-    label: "Report Team",
+    label: "Report",
     iconKey: "report",
     subItems: [
       {
@@ -248,7 +249,7 @@ export const items = [
   // admin team
   {
     id: 7,
-    label: "Admin Team",
+    label: "Admin",
     iconKey: "admin",
     subItems: [
       {
@@ -281,7 +282,7 @@ export const items = [
   // b2b team
   {
     id: 8,
-    label: "Custom Order Team",
+    label: "Custom Order",
     iconKey: "custom",
     subItems: [
       {
@@ -303,7 +304,7 @@ export const items = [
   },
   {
     id: 9,
-    label: "RTO Team",
+    label: "RTO",
     iconKey: "rto",
     subItems: [
       {

@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { getMatValue, getMatName } from "../../Actions/dropdownValuesActions";
 
-const RawMateialDropDown = ({ bgColor, height, width, options }) => {
+const RawMateialDropDown = ({ bgColor, height, width, options, disabled }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const dispatch = useDispatch();
@@ -44,57 +44,35 @@ const RawMateialDropDown = ({ bgColor, height, width, options }) => {
   }, []);
 
   return (
-    <div style={{ position: "relative", width: width || "auto" }} ref={dropdownRef}>
+    <div className="relative w-full" ref={dropdownRef} style={{ width: width || "auto" }}>
       <input
         type="text"
         value={searchTerm}
         onChange={handleSearchChange}
         onFocus={() => setDropdownVisible(true)}
-        placeholder="Search materials..."
-        style={{
-          width: "100%",
-          padding: "0.5vw",
-          fontSize: "1.1vw",
-          borderRadius: "0.5vw",
-          border: "1px solid #ccc",
-          marginBottom: "0.5vw",
-          backgroundColor: bgColor || "white",
-          color: "#838481",
-        }}
+        placeholder="Search Product"
+        disabled={disabled}
+        className="w-full p-2 border font-normal text-sm h-10 bg-white border-gray-300 text-[#4B5563] rounded-xl"
       />
       {dropdownVisible && (
         <div
-          style={{
-            backgroundColor: "white",
-            position: "absolute",
-            zIndex: 1000,
-            border: "1px solid #ccc",
-            borderRadius: "0.5vw",
-            maxHeight: "20vw",
-            overflowY: "auto",
-            width: "100%",
-          }}
+          className={`absolute z-50 bg-white border border-gray-300 rounded-[6px] max-h-[20vw] overflow-y-auto 
+          w-full shadow-md scrollbar-none`}
         >
-          <ul style={{ listStyleType: "none", padding: "0", margin: "0" }}>
+          <ul className="list-none">
             {filteredOptions.length > 0 ? (
               filteredOptions.map((material) => (
                 <li
                   key={material._id}
                   value={material._id}
                   onClick={() => handleMaterialChange(material)}
-                  style={{
-                    padding: "0.5vw 1vw",
-                    cursor: "pointer",
-                    borderBottom: "1px solid #ccc",
-                    color: "#838481",
-                    backgroundColor: bgColor || "white",
-                  }}
+                  className="px-5 py-3 text-sm font-medium cursor-pointer text-[#111928] hover:bg-[#F5F3FF] hover:text-[#3758F9] border-b border-gray-200"
                 >
                   {material.sku_code} - {material.material_name}
                 </li>
               ))
             ) : (
-              <li style={{ padding: "0.5vw 1vw", color: "#838481", backgroundColor: bgColor || "white" }}>
+              <li className="p-2 text-[#637381]">
                 No materials found
               </li>
             )}
@@ -103,6 +81,7 @@ const RawMateialDropDown = ({ bgColor, height, width, options }) => {
       )}
     </div>
   );
+  
 };
 
 export default RawMateialDropDown;

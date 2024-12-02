@@ -1,6 +1,7 @@
 import React from "react";
 
 const Input = ({
+  borderColor,
   height,
   width,
   padding,
@@ -19,7 +20,7 @@ const Input = ({
   return (
     <input
       type={type}
-      className={`${bgColor} ${textSize} ${fontWeight} ${height} ${width} ${padding} ${radius} ${color} focus:outline-none `}
+      className={`${bgColor} border ${borderColor} ${textSize} ${fontWeight} ${height} ${width} ${padding} ${radius} ${color}  focus:outline-none `}
       placeholder={placeholder}
       value={value}
       onChange={onChange}

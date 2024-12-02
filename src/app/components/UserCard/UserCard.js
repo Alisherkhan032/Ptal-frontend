@@ -11,7 +11,7 @@ const UserCard = ({ icon, name, email }) => {
   };
 
   return (
-    <div className="flex items-center gap-3 border border-[#DFE4EA] rounded-lg px-2 -ml-2 py-2 w-full">
+    <div className="flex items-center gap-3 border border-stroke -ml-2  rounded-lg px-2 py-2 w-[95%]">
       {/* Icon Section */}
       <div className="w-8 h-8 flex-shrink-0">
         {icon ? (
@@ -21,7 +21,7 @@ const UserCard = ({ icon, name, email }) => {
             className="w-full h-full object-cover rounded-[8px]"
           />
         ) : (
-          <div className="flex items-center justify-center w-full h-full rounded-[8px] bg-[#ff7777] font-bold text-white text-sm">
+          <div className="flex items-center justify-center w-full h-full rounded-[8px] bg-red-light font-bold text-white text-sm">
             {getInitials(name)}
           </div>
         )}
