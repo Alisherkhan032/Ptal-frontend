@@ -253,16 +253,14 @@ const OutwardForm = ({ poId, handleCancel }) => {
                   title="Cancel"
                   height="h-12"
                   onClick={handleCancel}
-                  textSize={"text-sm"}
+                  size='full'
                 />
               </div>
               <div className="flex-1">
                 <PrimaryButton
                   title="Fulfil"
                   type="submit"
-                  height="h-12"
-                  bgColor="bg-primary"
-                  textSize={"text-sm"}
+                  size='full'
                   onClick={submitForm}
                 />
               </div>
