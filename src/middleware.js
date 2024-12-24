@@ -9,7 +9,7 @@ export function middleware(request, response) {
       request.nextUrl.pathname.startsWith("/executive/dashboard") ||
       //Inventory Pages 
       request.nextUrl.pathname.startsWith("/inventory/inward_inventory_po") ||
-      request.nextUrl.pathname.startsWith("/inventory/prouct_inventory_level") ||
+      request.nextUrl.pathname.startsWith("/inventory/product_inventory_level") ||
       request.nextUrl.pathname.startsWith("/inventory/raise_inventory_po") ||
       request.nextUrl.pathname.startsWith("/inventory/inward_picklist") ||
       // Storage Pages 
@@ -43,7 +43,7 @@ export function middleware(request, response) {
       request.nextUrl.pathname === "/login"
     ) {
       return NextResponse.redirect(
-        new URL("/storage/inventory_level", request.url)
+        new URL("/procurement/raise_vendor_po", request.url)
       );
     }
   }

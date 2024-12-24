@@ -194,17 +194,10 @@ const Page = ({ params }) => {
   };
 
   return (
-    <div className="flex w-full h-screen flex-row gap-4">
+    <div className="flex w-full h-screen flex-row gap-4 text-black">
       <ToastContainer />
-      <div className="w-[23vw]">
-        <Sidebar items={items} />
-      </div>
 
       <div className="flex flex-col w-[77vw]">
-        <div>
-          <PageTitle pageTitle={'Fulfill Inventory PO:'} paramsData={params.fulfill_inventory_po} />
-        </div>
-
         <div className="mt-[0.3vw] p-4 scrollWidth w-[74vw] min-w-[74vw] max-w-[74vw] overflow-y-scroll min-h-[70vh] h-[70vh] max-h-[70vh]">
           <span>SKU CODE: {poDetailbyId?.product_id?.sku_code}</span>
 

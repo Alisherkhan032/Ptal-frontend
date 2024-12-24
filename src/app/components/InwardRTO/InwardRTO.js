@@ -262,7 +262,7 @@ const InwardRTO = () => {
   
 
   return (
-    <div className="h-[78vh] min-h-[78vh] max-h-[78vh] overflow-y-scroll">
+    <div className="h-[78vh] min-h-[78vh] max-h-[78vh] text-dark overflow-y-scroll">
       <ToastContainer />
       <div className="flex flex-col">
         <label>Order ID</label>

@@ -25,14 +25,11 @@ const Page = () => {
 
   return (
     <div className="flex w-full h-screen  flex-row gap-4">
-      <div className="w-[23vw]">
-        <Sidebar items={items} />
-      </div>
       <div className="flex flex-col w-[77vw] ">
         <div>
           <PageTitle pageTitle={"Outward Products To Dispatch"} />
         </div>
-        <div className="mt-[0.3vw]">
+        <div className="mt-[0.3vw] text-black">
           < OutwardProductsToDispatch />
         </div>
       </div>

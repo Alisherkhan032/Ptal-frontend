@@ -22,46 +22,48 @@ export const items = [
     path: "/storage/inward_procurement_po",
     subItems: [
       {
-        id: 21,
-        label: "Inward procurement PO",
-        path: "/storage/inward_procurement_po",
-      },
-      {
         id: 22,
-        label: "Staging Inventory Level",
-        path: "/storage/staging_inventory_level",
+        label: "Inward Procurement PO", 
+        path: "/storage/inward_procurement_po",
+        iconKey: "inwardPo"
       },
       {
         id: 23,
         label: "Fulfilled Procurement PO", 
         path: "/storage/fulfilled_procurement_po",
+        iconKey: "fulfilledPo"
       },
       {
         id: 24,
         label: "Storage inventory level",
         path: "/storage/inventory_level",
+        iconKey: "inventoryLevel"
       },
       {
         id: 25,
         label: "Storage QC-Fail Inventory",
         path: "/storage/storage_qc_fail_inventory",
+        iconKey: "qcFail"
       },
       {
         id: 26,
         label: "Outward Assembly Po",
         path: "/storage/outward_assembly_po",
+        iconKey: "outwardPo"
       },
       {
         id: 27,
         label: "Outward Bulk Raw Material Po",
         path: "/storage/outward_bulk_raw_material_po",
+        iconKey: "outwardPo"
       },
       {
         id: 28,
         label: "Outward Raw Materials To Engraving",
-        path: "/storage/outward_engraving_order"
+        path: "/storage/outward_engraving_order",
+        iconKey: "inventoryLevel"
       }
-    ],
+    ],    
   },
 
   // assembly team
@@ -69,41 +71,44 @@ export const items = [
     id: 3,
     label: "Assembly",
     iconKey: "assembly",
+    path: "/assembly/po_raised_by_inventory_team",
     subItems: [
+      // {
+      //   id: 31,
+      //   label: "Create PO",
+      //   subItems: [
+      //     // Nested subItems
+      //     // {
+      //     //   id: 311,
+      //     //   label: "Raise SFG PO",
+      //     //   path: "/assembly/create_po/raise_sfg_po",
+      //     // },
+      //     // {
+      //     //   id: 312,
+      //     //   label: "Raise FG PO",
+      //     //   path: "/assembly/create_po/raise_fg_po",
+      //     // },
+      //   ],
+      // },
       {
         id: 31,
-        label: "Create PO",
-        subItems: [
-          // Nested subItems
-          {
-            id: 311,
-            label: "Raise SFG PO",
-            path: "/assembly/create_po/raise_sfg_po",
-          },
-          {
-            id: 312,
-            label: "Raise FG PO",
-            path: "/assembly/create_po/raise_fg_po",
-          },
-        ],
+        label: "Inventory PO",
+        path: "/assembly/po_raised_by_inventory_team",
+        iconKey: "outwardPo"
       },
-
       {
         id: 32,
-        label: "View Assembly PO",
+        label: "Assembly PO",
         path: "/assembly/view_assembly_po",
+        iconKey: "inwardPo"
       },
 
-      {
-        id: 33,
-        label: "Generate QR Code",
-        path: "/assembly/generate_qr",
-      },
-      {
-        id: 34,
-        label: "PO Raised By Inventory Team",
-        path: "/assembly/po_raised_by_inventory_team",
-      },
+      // {
+      //   id: 33,
+      //   label: "Generate QR Code",
+      //   path: "/assembly/generate_qr",
+      // },
+      
     ],
   },
 
@@ -112,41 +117,47 @@ export const items = [
     id: 4,
     label: "Inventory",
     iconKey: "inventory",
+    path: "/inventory/inward_inventory_po",
     subItems: [
-      {
-        id: 11,
-        label: "Raise inventory PO",
-        path: "/inventory/raise_inventory_po",
-      },
+      // {
+      //   id: 11,
+      //   label: "Raise inventory PO",
+      //   path: "/inventory/raise_inventory_po",
+      // },
       {
         id: 12,
         label: "Inward inventory PO",
         path: "/inventory/inward_inventory_po",
+        iconKey : "inwardPo"
       },
       {
         id: 13,
         label: "Product inventory level",
-        path: "/inventory/prouct_inventory_level",
+        path: "/inventory/product_inventory_level",
+        iconKey : "inwardPo"
       },
       // {
       //   id: 14,
       //   label: "Outward Picklist",
       //   path: "/inventory/outward_picklist",
       // },
-      {
-        id: 15,
-        label: "Outward Products To Dispatch",
-        path: "/inventory/outward_products_to_dispatch",
-      },
+      // {
+      //   id: 15,
+      //   label: "Outward Products To Dispatch",
+      //   path: "/inventory/outward_products_to_dispatch",
+      //   iconKey : "inwardPo"
+      // },
       {
         id: 16,
         label: "Outward Products To Engraving",
-        path : "/inventory/outward_products_to_engraving"
+        path : "/inventory/outward_products_to_engraving",
+        iconKey : "inwardPo"
       },
       {
         id: 17,
         label: "Outwarded Products List",
         path: "/inventory/outwarded_products_list",
+        iconKey : "inwardPo"
       }
     ],
   },
@@ -156,6 +167,7 @@ export const items = [
       id: 10,
       label: "Engraving",
       iconKey: "engraving",
+      path: "/engraving/view_engraving_order",
       subItems: [
         {
           id: 101,
@@ -176,6 +188,7 @@ export const items = [
     id: 5,
     label: "Dispatch",
     iconKey: "dispatch",
+    path: "/dispatch/process_order_details",
     subItems: [
       // {
       //   id: 11,
@@ -237,6 +250,7 @@ export const items = [
     id: 6,
     label: "Report",
     iconKey: "report",
+    path: "/report/generate_report",
     subItems: [
       {
         id: 61,
@@ -251,6 +265,7 @@ export const items = [
     id: 7,
     label: "Admin",
     iconKey: "admin",
+    path: "/admin/create_raw_material",
     subItems: [
       {
         id: 72,
@@ -284,6 +299,7 @@ export const items = [
     id: 8,
     label: "Custom Order",
     iconKey: "custom",
+    path: "/b2b/create_custom_order",
     subItems: [
       {
         id: 81,
@@ -306,6 +322,7 @@ export const items = [
     id: 9,
     label: "RTO",
     iconKey: "rto",
+    path: "/rto/inwarded_rto_order_details",
     subItems: [
       {
         id: 91,

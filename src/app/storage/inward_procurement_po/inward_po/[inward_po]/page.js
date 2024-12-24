@@ -7,8 +7,6 @@ import {
   getPoByIdSuccess,
   getPoByIdFailure,
 } from '../../../../Actions/poActions';
-import { items } from '@/app/utils/sidebarItems';
-import Sidebar from '@/app/components/Sidebar/Sidebar';
 import Input from '@/app/components/Input/Input';
 import { Formik, Field, ErrorMessage, Form } from 'formik';
 import * as Yup from 'yup';
@@ -17,6 +15,7 @@ import PageTitle from '@/app/components/PageTitle/PageTitle';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { batchServices } from '@/app/services/batchService';
+
 
 // Custom Yup test to check if value starts with batch number
 Yup.addMethod(Yup.string, 'startsWithBatchNumber', function (batchNumber, message) {
@@ -71,6 +70,7 @@ const Page = ({ params }) => {
   useEffect(() => {
     getBatchNumberByPoId();
     getPoById();
+   
   }, [params.inward_po]);  // Use PO parameter
 
   // Validation schema
@@ -113,12 +113,9 @@ const Page = ({ params }) => {
   };
 
   return (
-    <div className="flex w-full h-screen flex-row gap-4">
+    <div className="flex w-full h-screen flex-row gap-4 text-black">
       <ToastContainer />
-      <div className="w-[23vw]">
-        <Sidebar items={items} />
-      </div>
-
+      
       <div className="flex flex-col w-[77vw]">
         <div>
           <PageTitle pageTitle={'Inward PO:'} paramsData={poById.po_number} />  {/* Title */}

@@ -1,0 +1,10 @@
+.sticky-shadow::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 100%;
+  width: 10px;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+}

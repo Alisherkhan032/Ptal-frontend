@@ -1,45 +1,62 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
-import "./sidebar.css";
-import { ICONS, ColoredIcon } from "@/app/utils/icons"; // Import ColoredIcon
+import { useSelector } from "react-redux";
+import { ICONS } from "@/app/utils/icons";
 import LogoComponent from "@/app/components/LogoComponent/LogoComponent";
 import UserCard from "../UserCard/UserCard";
 import { items } from "@/app/utils/sidebarItems";
-import { useSelector } from "react-redux";
 
 const Sidebar = () => {
-  const defaultActiveItemId = "procurement_team";
-  const [activeItem, setActiveItem] = useState(defaultActiveItemId);
+  const pathname = usePathname();
   const { userInfo } = useSelector((state) => state.auth);
 
-  const firstName = userInfo?.firstName || "User"; // Fallback to "User"
-  const lastName = userInfo?.lastName || "";
-  const email = userInfo?.email || "Not Available";
+  // Extract team name from pathname or default to 'storage'
+ const extractTeamName = (path) => { 
+  const segments = path.split('/').filter(Boolean); 
+  return segments.length > 0 ? segments[0] : 'storage'; 
+}; 
 
+  // Determine active item based on pathname
+  const determineActiveItem = () => { 
+    const teamName = extractTeamName(pathname); 
+     
+    const activeItem = items.find(item => {
+      // Extract the team name from the item's path
+      const itemTeamName = item.path.split('/')[1];
+      
+      // Compare only the team names
+      return teamName === itemTeamName;
+    }); 
+  
+    return activeItem?.id || '2'; // Fallback to default 
+  };
+
+  const [activeItem, setActiveItem] = useState(determineActiveItem());
+
+  // Update active item when pathname changes
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const savedActiveItem = localStorage.getItem("activeItem");
-      if (savedActiveItem) {
-        setActiveItem(JSON.parse(savedActiveItem));
-      }
-    }
-  }, []);
+    setActiveItem(determineActiveItem());
+  }, [pathname]);
 
   const handleItemClick = (item) => {
     setActiveItem(item.id);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("activeItem", JSON.stringify(item.id));
-    }
+    // Use Next.js routing instead of window.location
     window.location.href = item.path;
   };
 
+  // User info handling
+  const firstName = userInfo?.firstName || "User";
+  const lastName = userInfo?.lastName || "";
+  const email = userInfo?.email || "Not Available";
+
   return (
     <div className="flex flex-col w-[23vw] h-screen bg-[#f9fafc] font-medium text-black">
-      {/* Top Section - Logo */}
+      {/* Logo Section */}
       <div className="flex flex-col px-7 py-2 mt-1">
         <Link href="/storage/inventory_level">
-          <LogoComponent logo={'/logo.svg'} name="Fill Flow" />
+          <LogoComponent logo={"/filflow_logo.jpg"} name="Filflow" />
         </Link>
       </div>
 
@@ -55,15 +72,15 @@ const Sidebar = () => {
               }`}
               onClick={() => handleItemClick(item)}
             >
-              <span className="text-[#8899A8]">
-                {/* Use ColoredIcon to handle color change */}
-                <ColoredIcon
-                  icon={ICONS[item.iconKey]}
-                  isActive={activeItem === item.id}
-                  activeColor="#2D68F8"
-                  inactiveColor="#8899A8"
-                  size="mediumSmall"
-                />
+              <span
+                style={{
+                  color: activeItem === item.id ? "#3758F9" : "#9CA3AF",
+                }}
+              >
+                {React.cloneElement(ICONS[item.iconKey], {
+                  width: 20,
+                  height: 20,
+                })}
               </span>
               {item.label}
             </button>
@@ -71,7 +88,7 @@ const Sidebar = () => {
         ))}
       </div>
 
-      {/* Bottom Section - Admin Settings and Profile */}
+      {/* Bottom Section */}
       <div className="flex flex-col px-7 py-2 mt-3 bg-[#f9fafc]">
         {/* Admin Settings */}
         <div
@@ -83,14 +100,7 @@ const Sidebar = () => {
           onClick={() => handleItemClick({ id: "admin_settings", path: "#" })}
         >
           <span className="size-6">
-            {/* Use ColoredIcon to handle color change */}
-            <ColoredIcon
-              icon={ICONS["settings"]}
-              isActive={activeItem === "admin_settings"}
-              activeColor="#2D68F8"
-              inactiveColor="#8899A8"
-              size="mediumSmall"
-            />
+            {ICONS["settings"]}
           </span>
           <span className="text-sm">Admin Settings</span>
         </div>
@@ -104,4 +114,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default Sidebar; 

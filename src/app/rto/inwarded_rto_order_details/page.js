@@ -1,19 +1,22 @@
-'use client';
-import React, { useEffect } from 'react';
-import Sidebar from '@/app/components/Sidebar/Sidebar';
-import { items } from '@/app/utils/sidebarItems';
-import { useDispatch, useSelector } from 'react-redux';
-import PageTitle from '@/app/components/PageTitle/PageTitle';
-import RTOOrderTable from '@/app/components/RTOOrderTable/RTOOrderTable';
-import { rtoOrderService } from '@/app/services/rtoOrderService';
+"use client";
+import React, { useEffect, useState } from "react";
+import Sidebar from "@/app/components/Sidebar/Sidebar";
+import { items } from "@/app/utils/sidebarItems";
+import { useDispatch, useSelector } from "react-redux";
+import RightSidebar from "@/app/components/RaisePoFormSideBar/RaisePoFormSideBar";
+import RTOOrderTable from "@/app/components/RTOOrderTable/RTOOrderTable";
+import { rtoOrderService } from "@/app/services/rtoOrderService";
 import {
-    getAllRtoOrderRequest,
-    getAllRtoOrderSuccess,
-    getAllRtoOrderFailure
-} from '../../Actions/rtoOrderActions';
+  getAllRtoOrderRequest,
+  getAllRtoOrderSuccess,
+  getAllRtoOrderFailure,
+} from "../../Actions/rtoOrderActions";
+import { PrimaryButton } from "@/app/components/ButtonComponent/ButtonComponent";
+import TitleBar from "@/app/components/TitleBar/TitleBar";
 
 const page = () => {
- 
+
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -33,20 +36,35 @@ const page = () => {
     getAllRtoOrderDetails();
   }, []);
 
+  const buttons = [
+    <PrimaryButton
+      title="Inward Return"
+      onClick={() => setIsSidebarOpen(true)}
+      size='full'
+    />
+  ];
+
   return (
-    <div className="flex w-full h-screen  flex-row gap-4">
-      <div className="w-[23vw]">
-        <Sidebar items={items} />
+    <div className="relative w-full h-full overflow-scroll scrollbar-none bg-[#f9fafc]">
+      <div className="relative z-10 flex flex-col items-center overflow-scroll scrollbar-none px-4 py-2">
+        <div className="w-full max-w-full mb-4">
+          <TitleBar title="Returns" buttons={buttons} />
+        </div>
+
+        <div className="flex w-full max-w-full mb-6 scrollbar-none">
+          <div className="flex-1 rounded-lg  bg-gray-1 overflow-y-auto scrollbar-none">
+            <RTOOrderTable />
+          </div>
+        </div>
       </div>
 
-      <div className="flex flex-col w-[77vw] ">
-        <div>
-          <PageTitle pageTitle={'View Inwarded RTO Order Details'} />
-        </div>
-        <div className="mt-[0.3vw]  scrollWidth w-[74vw] min-w-[74vw] max-w-[74vw]  overflow-y-scroll min-h-[70vh] h-[70vh] max-h-[70vh]">
-        <RTOOrderTable />
-        </div>
-      </div>
+      {/* (Right Sidebar) */}
+      <RightSidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)} // Close the sidebar
+      >
+        <h1>Hi</h1>
+      </RightSidebar>
     </div>
   );
 };

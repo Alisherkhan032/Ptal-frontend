@@ -1,54 +1,78 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import Sidebar from '../../components/Sidebar/Sidebar';
-import { poServices } from '../../services/poService';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  getAllPoRequest,
-  getAllPoSuccess,
-  getAllPoFailure,
-} from '../../Actions/poActions';
 import FulfilledProcurementPOTable from '@/app/components/FulfilledProcurementPOTable/FulfilledProcurementPOTable';
-import './page.css';
+import StatusBar from "@/app/components/StatusBar/StatusBar";
+import TitleBar from "@/app/components/TitleBar/TitleBar";
+import { usePoData } from "@/app/hooks/usePoData";
+import NavigationBar from '@/app/components/NavigationBar/NavigationBar';
 import { items } from '@/app/utils/sidebarItems';
-import PageTitle from '@/app/components/PageTitle/PageTitle';
 
-const page = () => {
-  const dispatch = useDispatch();
+const Page = () => {  
 
-  const getAllPos = async () => {
-    try {
-      dispatch(getAllPoRequest());
-      const response = await poServices.getAllPo();
-      if (response.success === true) {
-        dispatch(getAllPoSuccess(response.data));
-      }
-    } catch (err) {
-      console.log(err);
-    }
+  const poData = usePoData();
+  const filteredPoData = poData.filter((po)=> po.status === 'fulfilled');
+
+  const calculateStatusBarData = (poData) => {
+    let pendingCount = 0;
+    let underStockCount = 0;
+    let overStockCount = 0;
+
+    filteredPoData.forEach((po) => {
+      const { current_stock, lower_threshold, upper_threshold } = po.raw_material_id;
+      if (po.status === "fulfilled") pendingCount++;
+      if (current_stock < lower_threshold) underStockCount++;
+      if (current_stock > upper_threshold) overStockCount++;
+    });
+
+    return [
+      { value: pendingCount, heading: "fulfilled PO's" },
+      { value: overStockCount, heading: "Items with Over Stock" },
+      { value: underStockCount, heading: "Items with Under Stock" },
+    ];
   };
 
-  useEffect(() => {
-    getAllPos();
-  }, []);
+  const statusBarData = calculateStatusBarData(poData);
+
+  const generateNavItems = () => {
+    
+    const storageTeam = items.find(item => item.label === "Storage");
+  
+    if (storageTeam && storageTeam.subItems) {
+      return storageTeam.subItems.map(subItem => ({
+        name: subItem.label,
+        path: subItem.path,
+        icon: subItem.iconKey,
+      }));
+    }
+  
+    return [];
+  };
+  
+  const navItems = generateNavItems();
 
   return (
-    <div className="flex w-full h-screen  flex-row gap-4">
-      <div className="w-[23vw]">
-        <Sidebar items={items} />
-      </div>
-
-      <div className="flex flex-col w-[77vw] ">
-        <div>
-          <PageTitle pageTitle={'Fulfilled Procurement PO'} />
+    <div className="relative w-full h-full overflow-scroll scrollbar-none bg-[#f9fafc]">
+      <div className="relative z-10 flex flex-col items-center overflow-scroll scrollbar-none px-4 py-2">
+        <div className="w-full max-w-full mb-4">
+          <TitleBar title="Storage"  />
         </div>
 
-        <div className="scrollWidth mt-[0.3vw] w-[74vw]  min-w-[74vw] max-w-[74vw]  overflow-y-scroll min-h-[70vh] h-[70vh] max-h-[70vh]">
-          < FulfilledProcurementPOTable/>
+        <div className="w-full max-w-full mb-5">
+          <StatusBar data={statusBarData} />
+        </div>
+
+        <div className='w-full max-w-full mb-5'>
+        <NavigationBar navItems={navItems} />
+        </div>
+
+        <div className="flex w-full max-w-full mb-6 scrollbar-none">
+          <div className="flex-1 rounded-lg  bg-gray-1 overflow-y-auto scrollbar-none">
+            <FulfilledProcurementPOTable />
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default page;
+export default Page;

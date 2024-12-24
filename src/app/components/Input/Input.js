@@ -1,26 +1,41 @@
 import React from "react";
 
+// Helper function to get size-specific classes
+const getInputSizeClasses = (size) => {
+  switch (size) {
+    case "small":
+      return "h-8 text-sm px-2 py-1"; // Small input size
+    case "medium":
+      return "h-10 text-sm px-4 py-2"; // Medium input size (default)
+    case "large":
+      return "h-12 text-base px-5 py-3"; // Large input size
+    default:
+      return "h-10 text-sm px-4 py-2"; // Default to medium
+  }
+};
+
 const Input = ({
-  borderColor,
-  height,
-  width,
-  padding,
-  bgColor,
-  color,
-  textSize,
-  fontWeight,
-  placeholder,
-  radius,
-  type,
+  type = "text", // Default input type
+  placeholder = "",
   value,
   onChange,
   onKeyDown,
   name,
+  size = "medium", // Default size
+  bgColor = "bg-transparent", // Transparent by default
+  borderColor = "border-[#DFE4EA]", // Default border color
+  width = "w-full", // Full width by default
+  color = "text-[#838481]", // Text color
+  fontWeight = "font-normal", // Font weight
+  radius = "rounded-xl", // Border-radius
 }) => {
+  // Get size classes based on the size prop
+  const sizeClasses = getInputSizeClasses(size);
+
   return (
     <input
       type={type}
-      className={`${bgColor} border ${borderColor} ${textSize} ${fontWeight} ${height} ${width} ${padding} ${radius} ${color}  focus:outline-none `}
+      className={`${bgColor} border ${borderColor} ${sizeClasses} ${fontWeight} ${width} ${radius} ${color} focus:outline-none`}
       placeholder={placeholder}
       value={value}
       onChange={onChange}
@@ -31,17 +46,3 @@ const Input = ({
 };
 
 export default Input;
-
-{
-  /* <Input
-// placeholder={"email"}
-bgColor={"bg-[#F8F6F2]"}
-radius={"rounded-lg"}
-height={"h-[3.5vw] min-h-[3.5vh]"}
-padding={"p-[1vw]"}
-type={"email"}
-color={"text-[#838481]"}
-textSize={"text-[1vw]"}
-fontWeight={"font-medium"}
-/> */
-}

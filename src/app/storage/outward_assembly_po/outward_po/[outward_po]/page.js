@@ -165,7 +165,7 @@ const Page = ({ params }) => {
   };
 
   return (
-    <div className="flex w-full h-screen flex-row gap-4">
+    <div className="flex w-full h-screen flex-row gap-4 text-black">
       <ToastContainer />
       <div className="w-[23vw]">
         <Sidebar items={items} />

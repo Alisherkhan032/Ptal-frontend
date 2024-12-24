@@ -170,12 +170,15 @@ const RaisePoFormComponent = ({ onCancel }) => {
         vendor_id: vendorId,
       });
       if (response.success === true) {
-        toast.success(`PO Created Successfully!`, {
+        toast.success(`Your Vendor PO was raised successfully`, {
           autoClose: 1500,
           onClose: () => {
+            onCancel(); // Close the sidebar
             window.location.reload(); // Refresh the page after the toast is shown
           },
           disableClick: true,
+          className:
+            "bg-green-light-6 text-green-dark p-4 rounded-lg shadow-lg text-sm",
         });
         setFormDisabled(true); // Disable form interactions when toaster is shown
       }
@@ -211,8 +214,8 @@ const RaisePoFormComponent = ({ onCancel }) => {
 
   return (
     <>
-      <div className="p-6 w-full h-full relative overflow-y-scroll scrollbar-none pb-10 text-black">
-        <ToastContainer />
+      <div className=" relative overflow-y-scroll scrollbar-none pb-10 text-black">
+        <ToastContainer position="bottom-center" />
         <h2 className="text-base font-semibold text-[#111928] mb-1">
           Raise Vendor PO
         </h2>
@@ -359,7 +362,7 @@ const RaisePoFormComponent = ({ onCancel }) => {
             onClick={addMultipleRawMaterials}
           />
         </div>
-        <div className="mt-4 h-auto mb-8">
+        <div className="mt-4 h-auto w-full mb-8">
           <ul>
             {finalFormData.length > 0 && (
               <h2 className="text-base font-semibold text-dark mb-2">
@@ -370,17 +373,17 @@ const RaisePoFormComponent = ({ onCancel }) => {
             {finalFormData.map((data, idx) => (
               <li
                 key={idx}
-                className="shadow-sm rounded-lg p-3 gap-x-2 bg-white flex justify-between relative"
+                className="shadow-sm rounded-lg py-3 bg-white flex items-center justify-between space-x-4 px-4"
               >
-                <div className=" py-4 px-2 flex-1 min-w-full rounded-lg bg-gray-1">
-                  <div className="flex justify-between items-center mb-2 whitespace-nowrap">
+                <div className="flex-grow min-w-0 py-2 px-1 rounded-lg bg-gray-1">
+                  <div className="flex justify-between items-center mb-2 ">
                     <span className="text-dark font-medium text-sm">
                       {data.raw_material_name}
                     </span>
                   </div>
 
                   {/* Quantity, Weight, and Bill Number in One Row */}
-                  <div className="flex justify-between gap-6">
+                  <div className="flex justify-between gap-6 overflow-hidden">
                     <div className="flex gap-x-2">
                       <span className="font-normal text-sm text-dark-4">
                         Quantity:
@@ -409,6 +412,7 @@ const RaisePoFormComponent = ({ onCancel }) => {
                 </div>
 
                 <button
+                  className="flex-shrink-0 ml-4"
                   onClick={() => removeRawMaterial(idx)}
                   disabled={formDisabled}
                 >
@@ -430,15 +434,14 @@ const RaisePoFormComponent = ({ onCancel }) => {
       <div className="absolute bottom-0 left-0 w-full border border-t-stroke  bg-white p-2">
         <div className="flex gap-x-2">
           <div className="flex-1">
-            <SecondaryButton title="Cancel" height="h-12" onClick={onCancel} />
+            <SecondaryButton title="Cancel" width='w-full' onClick={onCancel} />
           </div>
           <div className="flex-1">
             <PrimaryButton
               title="Raise PO"
               onClick={createNewPO}
               disabled={finalFormData.length === 0}
-              height="h-12"
-              bgColor="bg-primary"
+              width="w-full"
             />
           </div>
         </div>

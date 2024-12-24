@@ -1,5 +1,4 @@
 // Local Database - 
-// export const BASE_URL = 'http://localhost:5000/api/v1';
 export const BASE_URL = 'https://ptal-backend.onrender.com/api/v1';
 // Staging Database - 
 //export const BASE_URL ='https://staging-backend.ptal.filflo.in/api/v1';

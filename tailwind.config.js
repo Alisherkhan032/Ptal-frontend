@@ -14,6 +14,7 @@ module.exports = {
       },
       colors : {
         "primary": "#3758F9",
+        "primary-dark": "#1C3FB7",
         "secondary": "#13C296",
         "primary-text" : "#637381",
         "secondary-text" : "#8899A8",
@@ -36,9 +37,16 @@ module.exports = {
         "red-light" : "#F56060",
         "green-light-6" : "#DAF8E6",
         "green" : "#22AD5C",
+        "green-dark": "#1A8245",
+        "purple-dark" : "#6D28D9",
         "purple-light-4" : "#EDE9FE",
         "purple-light-3": "#DDD6FE",
-        "purple-dark" : "#6D28D9"
+        "purple-light-5" : "#F5F3FF",
+        "purple-dark" : "#6D28D9",
+        'svg-gray' : "#9ca3af",
+        "yellow-light-4": "#FFFBEB",
+        "yellow-dark": "#F59E0B",
+
 
       }
     },

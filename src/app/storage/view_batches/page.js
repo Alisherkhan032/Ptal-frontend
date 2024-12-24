@@ -1,16 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Sidebar from "../../components/Sidebar/Sidebar";
 import { batchServices } from "@/app/services/batchService";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getAllBatchRequest,
   getAllBatchSuccess,
-  getAllBatchFailure,
 } from "../../Actions/batchActions";
-
 import ViewBatchTable from "@/app/components/ViewBatchTable/ViewBatchTable";
 import { items } from "@/app/utils/sidebarItems";
+import TitleBar from "@/app/components/TitleBar/TitleBar";
 
 const page = () => {
   const { selectedRawMaterialId } = useSelector((state) => state.batch);
@@ -34,23 +32,22 @@ const page = () => {
   }, []);
 
   return (
-    <div className="flex w-full h-screen  flex-row gap-4">
-      <div className="w-[23vw]">
-        <Sidebar items={items} />
-      </div>
-
-      <div className="flex flex-col w-[77vw] ">
-        <div className="flex leading-tight mt-[2.5vw] flex-col">
-          <span className="font-semibold text-[1.6vw] ">Fillflow Portal</span>
-          <span className="text-[1.1vw] font-medium text-[rgb(181,176,161)]">
-            A inventory management system
-          </span>
+    <div className="relative w-full h-full overflow-scroll scrollbar-none bg-[#f9fafc]">
+      <div className="relative z-10 flex flex-col items-center overflow-scroll scrollbar-none px-4 py-2">
+        <div className="w-full max-w-full mb-4">
+          <TitleBar title="Storage" />
         </div>
-        <span className="mt-[1.2vw] text-[1.4vw] font-semibold">
-          Batches - {selectedRawMaterialId}
-        </span>
-        <div className="mt-[0.3vw]  scrollWidth w-[74vw] min-w-[74vw] max-w-[74vw]  overflow-y-scroll min-h-[70vh] h-[70vh] max-h-[70vh]">
-          <ViewBatchTable />
+
+        <div className="w-full max-w-full mb-5">
+          <h1 className="text-base text-black font-semibold">
+            Batches - {selectedRawMaterialId}
+          </h1>
+        </div>
+
+        <div className="flex w-full max-w-full mb-6 scrollbar-none">
+          <div className="flex-1 rounded-lg  bg-gray-1 overflow-y-auto scrollbar-none">
+            <ViewBatchTable />
+          </div>
         </div>
       </div>
     </div>

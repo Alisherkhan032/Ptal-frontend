@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { setSelectedCat } from "@/app/Actions/categoryActions";
+import { ICONS } from "@/app/utils/icons";
 
 const MaterialCategoryFilter = ({ bgColor, name, options }) => {
   const dispatch = useDispatch();
@@ -45,17 +46,26 @@ const MaterialCategoryFilter = ({ bgColor, name, options }) => {
             onClick={() => handleCategoryClick(category._id)}
           >
             <div className="flex items-center justify-center space-x-2">
-              {/*todo : ICONS to be added */}
               <span>
-                {category.icon && (
-                  <img
-                    src={category.icon} // Replace with your icon source
-                    alt={`${category.category_name} icon`}
-                    className="w-4 h-4"
-                  />
-                )}
+                {category.category_name === "Raw Material"
+                  ? React.cloneElement(ICONS["rawMaterial"], {
+                      width: 20,
+                      height: 20,
+                    })
+                  : ""}
+                {category.category_name === "Packaging Material"
+                  ? React.cloneElement(ICONS["packaging"], {
+                      width: 20,
+                      height: 20,
+                    })
+                  : ""}
               </span>
-              <span>{category.category_name}</span>
+              <span className="text-sm">
+                {" "}
+                {category.category_name === "Packaging Material"
+                  ? "Packaging"
+                  : "Raw Material"}
+              </span>
             </div>
           </button>
         ))}

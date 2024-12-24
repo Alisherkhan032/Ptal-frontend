@@ -1,16 +1,23 @@
 import React from "react";
+import Drawer from "@mui/material/Drawer";
+import Box from "@mui/material/Box";
 
-const RightSidebar = ({ isOpen, onClose, title, children }) => {
-  if (!isOpen) return null; // Hide the sidebar when closed
-
+const RightSidebar = ({ isOpen, onClose, children }) => {
   return (
-    <div className="fixed inset-0 z-50 flex">
-      {/* Sidebar */}
-      <div className="bg-white w-[36%] rounded-l-[16px] h-full fixed right-0"> 
+    <Drawer
+      anchor="right"
+      open={isOpen}
+      onClose={onClose}
+      classes={{
+        paper: "w-[36%] rounded-tl-lg rounded-bl-lg", // Tailwind for width and border radius
+      }}
+    >
+      <Box
+        className="h-full overflow-y-auto bg-white p-6 scrollbar-none" // Tailwind for height, overflow, background, and padding
+      >
         {children}
-      </div>
-
-    </div>
+      </Box>
+    </Drawer>
   );
 };
 

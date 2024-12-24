@@ -163,7 +163,7 @@ const OutwardProductsToDispatch = () => {
   };
 
   return (
-    <div>
+    <div className="text-black">
       <ToastContainer />
       <label style={{ display: "block", marginBottom: "8px", marginTop: "10px" }}>
         Enter amount of products you want to outward to dispatch :-

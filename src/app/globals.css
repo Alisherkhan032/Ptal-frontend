@@ -42,3 +42,14 @@ body {
 @import "~@flaticon/flaticon-uicons/css/all/all.css";
 
 
+.sticky::before {
+  content: '';
+  position: absolute;
+  left: -3px; /* Adjust based on the desired border width */
+  top: 0;
+  bottom: 0;
+  width: 3px; /* Width of the border */
+  background: linear-gradient(to left, transparent, rgba(0, 0, 0, 0.1)); /* Gradient for blur effect */
+  pointer-events: none; /* Avoid interaction with the pseudo-element */
+  z-index: -1; /* Place behind the content */
+}

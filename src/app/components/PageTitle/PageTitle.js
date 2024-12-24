@@ -13,6 +13,8 @@ const PageTitle = ({ pageTitle, paramsData }) => {
   const handleLogout = () => {
     dispatch(setToken(null));
     localStorage.removeItem('x-access-token');
+    localStorage.removeItem('activeItem');
+    localStorage.removeItem('activePath');
     deleteCookie('x-access-token');
     // router.replace('/login');
     //window.location.reload();

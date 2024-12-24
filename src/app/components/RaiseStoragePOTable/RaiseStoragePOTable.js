@@ -3,9 +3,13 @@ import { useSelector } from "react-redux";
 import moment from "moment";
 import DynamicTableWithoutAction from "../DynamicTableWithoutAction/DynamicTableWithoutAction";
 import PoFilterBar from "../PoFilterBar/PoFilterBar";
+import { convertToCSV } from  '@/app/utils/csvUtils';
+import StatusComponent from "../StatusComponent/StatusComponent";
 
 const RaiseStoragePOTable = () => {
   const { allPO, loading, error } = useSelector((state) => state.po);
+
+  console.log('allPO====', allPO);
 
   // State for filter type
   const [filter, setFilter] = useState("allPo");
@@ -64,17 +68,13 @@ const RaiseStoragePOTable = () => {
 
   useEffect(() => {
     applyFilters();
-  }, [filter, dayFilter, allPO, filteredData]);
+  }, [filter, dayFilter, allPO]);
 
   const currentDateAndFileName = `Raise_Vendor_PO_${moment().format(
     "DD-MMM-YYYY"
   )}`;
 
-  const handleSearch = (data) => {
-    setFilteredData(data);
-  };
-
-  const convertToCSV = (data) => {
+  const handleCSVDownload  = (data) => {
     const headers = [
       "RAW MATERIAL NAME",
       "GRN",
@@ -85,27 +85,17 @@ const RaiseStoragePOTable = () => {
       "CREATED AT",
     ];
 
-    const rows = data.map((po) => [
-      po?.raw_material_id?.material_name,
-      po?.grn_number,
-      po?.po_number,
-      po?.vendor_id?.vendor_name,
-      po?.quantity,
-      `${po?.created_by?.firstName} ${po?.created_by?.lastName}`,
-      moment(po?.createdAt).format("DD MM YYYY") || "",
-    ]);
+    const rowMapper = (po) => [
+      po.material_name,
+      po.grn,
+      po.po_number,
+      po.vendor_name,
+      po.quantity,
+      po.raised_by,
+      po.created_at,
+    ];
 
-    const csvContent =
-      "data:text/csv;charset=utf-8," +
-      [headers.join(","), ...rows.map((row) => row.join(","))].join("\n");
-
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", currentDateAndFileName);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    convertToCSV(rowData, headers, rowMapper, "Raise_Vendor_PO");
   };
 
   const searchKeys = [
@@ -118,33 +108,61 @@ const RaiseStoragePOTable = () => {
     "status",
   ];
 
-  const headings = [
-    "created_at",
-    "material_name",
-    "status",
-    "po_number",
-    "grn",
-    "quantity",
-    "vendor_name",
-    "bill_number",
-    "raised_by",
-  ];
+  const headings  = {
+    "created_at": {
+      label: "Created At",
+      renderCell : (row) => row?.createdAt ? moment(row?.createdAt).format("DD MMM YYYY") : "N/A",
+      isSticky: false
+    },
+    "status": {
+      label: "Status",
+      renderCell: (row) => <StatusComponent status={row?.status} />,
+      isSticky: false
+    },
+    "material_name": {
+      label: "Material Name",
+      renderCell : (row) => row?.raw_material_id?.material_name,
+      isSticky: false
+    },
+    "po_number": {
+      label: "PO Number",
+      renderCell : (row) => row?.po_number,
+      isSticky: false
+    },
+    "grn": {
+      label: "GRN",
+      renderCell : (row) => row?.grn_number,
+      isSticky: false
+    },
+    quantity: {
+      label: "Quantity",
+      renderCell : (row) => row?.quantity,
+      isSticky: false
+    },
+    vendor_name: {
+      label: "Vendor Name",
+      renderCell : (row) => row?.vendor_id?.vendor_name,
+      isSticky: false
+    },
+    bill_number: {
+      label: "Bill Number",
+      renderCell : (row) => row?.bill_number,
+      isSticky: false
+    },
+    raised_by: {
+      label: "Raised By",
+      renderCell : (row) => `${row?.created_by?.firstName} ${row?.created_by?.lastName}`,
+      isSticky: false
+    }
 
-  const rowData = filteredData.map((po) => ({
-    material_name: po?.raw_material_id?.material_name,
-    grn: po?.grn_number,
-    po_number: po?.po_number,
-    vendor_name: po?.vendor_id?.vendor_name,
-    bill_number: po?.bill_number,
-    quantity: po?.raw_material_id?.current_stock,
-    raised_by: `${po?.created_by?.firstName} ${po?.created_by?.lastName}`,
-    created_at: new Date(po?.createdAt).toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    }),
-    status: po?.status,
-  }));
+  }
+
+  const filterOptions = [
+    { value: 'allPo', label: 'All POs' },
+    { value: 'pending', label: 'Pending' },
+    { value: 'fulfilled', label: 'Fulfilled' },
+    // { value: 'qc_info_added', label: 'Qc Info Added' },
+  ];
 
   const handleDayFilterChange = (event) => {
     setDayFilter(event.target.value);
@@ -157,14 +175,15 @@ const RaiseStoragePOTable = () => {
         setFilter={setFilter}
         searchText={searchText}
         setSearchText={setSearchText}
-        convertToCSV={convertToCSV}
+        convertToCSV={handleCSVDownload}
         dayFilter={dayFilter}
         handleDayFilterChange={handleDayFilterChange}
         allPO={allPO}
+        filterOptions = {filterOptions}
       />
 
       <div className="relative scrollbar-none overflow-x-auto sm:rounded-lg">
-        <DynamicTableWithoutAction headings={headings} rows={rowData} />
+        <DynamicTableWithoutAction headings={headings} rows={filteredData} />
       </div>
     </>
   );
