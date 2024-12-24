@@ -112,18 +112,15 @@ const QcInfoForm = ({
           <div className="flex-1">
             <SecondaryButton
               title="Cancel"
-              height="h-12"
               onClick={handleCancel}
-              textSize={"text-sm"}
+              size='full'
             />
           </div>
           <div className="flex-1">
             <PrimaryButton
               title="Fulfil"
               onClick={handleSubmit}
-              height="h-12"
-              bgColor="bg-primary"
-              textSize={"text-sm"}
+              size='full'
             />
           </div>
         </div>
