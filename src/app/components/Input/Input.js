@@ -22,7 +22,7 @@ const Input = ({
   onKeyDown,
   name,
   size = "medium", // Default size
-  bgColor = "bg-transparent", // Transparent by default
+  bgColor = "bg-white", // Transparent by default
   borderColor = "border-[#DFE4EA]", // Default border color
   width = "w-full", // Full width by default
   color = "text-[#838481]", // Text color

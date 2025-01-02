@@ -21,6 +21,7 @@ const ViewAssemblyTable = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [sidebarType, setSidebarType] = useState(null);
   const [selectedPo, setSelectedPo] = useState(null);
+  const [sidebarContent, setSidebarContent] = useState(null);
 
   const sortedMaterials = allAssemblyPO.sort((a, b) => {
     return new Date(b.updatedAt) - new Date(a.updatedAt);

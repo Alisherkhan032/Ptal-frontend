@@ -12,6 +12,9 @@ import {
 } from "@/app/utils/stickyActionClassname";
 import ActionDropdown from "../ActionDropdown/ActionDropdown";
 import PoFilterBar from "../PoFilterBar/PoFilterBar";
+import { ICONS } from "@/app/utils/icons";
+import RightSidebar from "@/app/components/RaisePoFormSideBar/RaisePoFormSideBar";
+import DynamicTableInsideSidebar from "../DynamicTableInsideSidebar/DynamicTableInsideSidebar";
 
 const EngravingOrderTable = () => {
   // Fetch engraving orders from Redux store
@@ -33,52 +36,50 @@ const EngravingOrderTable = () => {
   const [searchText, setSearchText] = useState("");
 
   const applyFilters = () => {
-      let data = allEngravingOrders;
-  
-      if (filter !== "allPo") {
-        data = data.filter((item) => item.status === filter);
-      }
-  
-      data = data.filter((item) =>
-        searchKeys.some((key) =>
-          searchNested(item[key], searchText.toLowerCase(), key)
-        )
-      );
+    let data = allEngravingOrders;
 
-      setFilteredData(data);
-    };
-  
-    const searchNested = (obj, query, key) => {
-      if (Array.isArray(obj)) {
-        return obj.some((item) => searchNested(item, query, key));
-      }
-      if (typeof obj === "object" && obj !== null) {
-        return Object.values(obj).some((val) => searchNested(val, query, key));
-      }
-      if (typeof obj === "string") {
-        return obj.toLowerCase().includes(query);
-      }
-      if (typeof obj === "number" && key === "quantity") {
-        return obj.toString().includes(query);
-      }
-      return false;
-    };
-  
-    useEffect(() => {
-      applyFilters();
-    }, [filter,  allEngravingOrders, searchText]);
+    if (filter !== "allPo") {
+      data = data.filter((item) => item.status === filter);
+    }
+
+    data = data.filter((item) =>
+      searchKeys.some((key) =>
+        searchNested(item[key], searchText.toLowerCase(), key)
+      )
+    );
+
+    setFilteredData(data);
+  };
+
+  const searchNested = (obj, query, key) => {
+    if (Array.isArray(obj)) {
+      return obj.some((item) => searchNested(item, query, key));
+    }
+    if (typeof obj === "object" && obj !== null) {
+      return Object.values(obj).some((val) => searchNested(val, query, key));
+    }
+    if (typeof obj === "string") {
+      return obj.toLowerCase().includes(query);
+    }
+    if (typeof obj === "number" && key === "quantity") {
+      return obj.toString().includes(query);
+    }
+    return false;
+  };
+
+  useEffect(() => {
+    applyFilters();
+  }, [filter, allEngravingOrders, searchText]);
 
   // Generate CSV filename with current date
   const currentDateAndFileName = `Engraving_Order_${moment().format(
     "DD-MMM-YYYY"
   )}`;
 
-  
   useEffect(() => {
     setFilteredData(sortedOrders);
   }, [sortedOrders]);
 
-  
   // Convert orders to CSV format for download
   const convertToCSV = (data) => {
     const headers = [
@@ -208,7 +209,11 @@ const EngravingOrderTable = () => {
     action: {
       label: "Action",
       renderCell: (row) => (
-        <ActionDropdown po={row} actions={generatePOActions(row)} />
+        <ActionDropdown
+          po={row}
+          actions={generatePOActions(row)}
+          customElement={customQrCodeDownloadProps}
+        />
       ),
       isSticky: true,
       stickyClassHeader: stickyActionColumnClassname,
@@ -216,17 +221,23 @@ const EngravingOrderTable = () => {
     },
   };
 
+  const headingsInsideSidebar = [
+    {
+      label: "Inventory QR Code",
+      renderCell: (row) => row?.engraving_qr || "N/A",
+    },
+    {
+      label: "Engraving QR Code",
+      renderCell: (row) => row?.inventory_qr || "N/A",
+    },
+  ];
+
   const generatePOActions = (po) => {
     return [
       {
         label: "View Details",
         condition: null,
-        action: () => openSidebar("inward", po),
-      },
-      {
-        label: "Generate QR Code",
-        condition: (po) => po.status !== "pending",
-        action: () => handleGenerateQRCode(po),
+        action: () => openSidebar("viewDetails", po),
       },
     ];
   };
@@ -243,6 +254,14 @@ const EngravingOrderTable = () => {
     setSelectedPo(null);
   };
 
+  const customQrCodeDownloadProps = [
+    {
+      label: ICONS.qrCode,
+      condition: null,
+      action: (po) => handleGenerateQRCode(po),
+    },
+  ];
+
   const filterOptions = [
     { value: "allPo", label: "All POs" },
     { value: "pending", label: "Pending" },
@@ -253,6 +272,31 @@ const EngravingOrderTable = () => {
     { value: "outwarded_from_inventory", label: "Outward From Inventory" },
     { value: "outwarded_from_storage", label: "Outward From Storage" },
   ];
+
+  console.log("selectedPo===", selectedPo);
+
+  function createDataArray(selectedPo) {
+    if (!selectedPo?.listOfProducts?.[0]) {
+      throw new Error(
+        "Invalid input: Ensure selectedPo and its structure are correct."
+      );
+    }
+
+    // Extract the arrays
+    const engravingQrCode =
+      selectedPo.listOfProducts[0].engraving_qr_code || [];
+    const inventoryQrCode =
+      selectedPo.listOfProducts[0].inventory_qr_code || [];
+
+    // Calculate the maximum length of the two arrays
+    const maxLength = Math.max(engravingQrCode.length, inventoryQrCode.length);
+
+    // Create the data array
+    return Array.from({ length: maxLength }, (_, index) => ({
+      engraving_qr: engravingQrCode[index] || "N/A",
+      inventory_qr: inventoryQrCode[index] || "N/A",
+    }));
+  }
 
   return (
     <>
@@ -266,6 +310,24 @@ const EngravingOrderTable = () => {
         filterOptions={filterOptions}
       />
       <DynamicTableWithoutAction headings={headings} rows={filteredData} />
+
+      <RightSidebar isOpen={isSidebarOpen} onClose={closeSidebar}>
+        {sidebarType === "viewDetails" && (
+          <>
+            <h2 className="text-base font-semibold text-[#111928] mb-2 ml-2">
+            QR Codes for Order
+            </h2>
+            <p className="text-sm font-normal text-[#4B5563] mb-6 ml-2">
+            View the Inventory and Engraving QR Codes
+            </p>
+            <DynamicTableInsideSidebar
+              headings={headingsInsideSidebar}
+              rows={createDataArray(selectedPo) || []}
+              handleCancel={closeSidebar}
+            />
+          </>
+        )}
+      </RightSidebar>
     </>
   );
 };

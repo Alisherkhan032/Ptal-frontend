@@ -27,10 +27,10 @@ const MaterialCategoryFilter = ({ bgColor, name, options }) => {
 
   return (
     <div className="flex flex-col space-y-2">
-      <h2 className="block text-[#111928] text-sm font-medium mb-1">
+      {/* <h2 className="block text-[#111928] text-sm font-medium mb-1">
         {name}
         <span className="text-[#9CA3AF] ml-[2px]">*</span>
-      </h2>
+      </h2> */}
       <div className="flex w-full">
         {options.map((category, index) => (
           <button

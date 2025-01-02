@@ -1,6 +1,12 @@
-'use client'
+"use client";
 import React, { useEffect, useState } from "react";
 import Input from "../Input/Input";
+import Label from "../Label/Label";
+import Select from "../Select/Select";
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from "../ButtonComponent/ButtonComponent";
 import Button from "../Button/Button";
 import CustomDatePicker from "../DatePicker/DatePicker";
 import dayjs from "dayjs";
@@ -24,10 +30,10 @@ import { categoryServices } from "@/app/services/categoryService";
 import "./CreateCustomOrderForm.css";
 import { orderServices } from "@/app/services/oderService";
 import { sfgCategories } from "@/app/constants/categoryConstants";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const CreateCustomOrderForm = () => {
+const CreateCustomOrderForm = ({ onCancel }) => {
   const { allCategories, selectedCatId } = useSelector(
     (state) => state.category
   );
@@ -41,11 +47,10 @@ const CreateCustomOrderForm = () => {
 
   const [scheduledDispatchDate, setScheduledDispatchDate] = useState();
   const [formDisabled, setFormDisabled] = useState(false);
-  
 
   const [formData, setFormData] = useState({
     orderDate: dayjs().startOf("day").format("YYYY-MM-DD HH:mm:ss"),
-    scheduledDispatchDate: dayjs().startOf("day").format("YYYY-MM-DD HH:mm:ss"), 
+    scheduledDispatchDate: dayjs().startOf("day").format("YYYY-MM-DD HH:mm:ss"),
     platform: "",
     orderId: "",
     awbNumbers: [],
@@ -81,7 +86,6 @@ const CreateCustomOrderForm = () => {
       scheduledDispatchDate: formattedDate,
     }));
   };
-  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -171,10 +175,12 @@ const CreateCustomOrderForm = () => {
   const validateForm = () => {
     const newErrors = {};
     if (!formData.orderDate) newErrors.orderDate = "Order date is required.";
-    if (!formData.scheduledDispatchDate) newErrors.scheduledDispatchDate = "Scheduled dispatch date is required."; 
+    if (!formData.scheduledDispatchDate)
+      newErrors.scheduledDispatchDate = "Scheduled dispatch date is required.";
     if (!formData.orderId) newErrors.orderId = "Order ID is required.";
     if (!formData.orderTitle) newErrors.orderTitle = "Order title is required.";
-    if (!formData.platform) newErrors.platform = "Platform selection is required.";
+    if (!formData.platform)
+      newErrors.platform = "Platform selection is required.";
     if (formData.listOfProducts.length === 0)
       newErrors.listOfProducts = "At least one product must be added.";
 
@@ -188,276 +194,262 @@ const CreateCustomOrderForm = () => {
     try {
       const response = await orderServices.createOrder(formData);
       if (response && response.success) {
-        toast.success('Custom B2B Order Created Successfully', {
+        toast.success("Custom B2B Order Created Successfully", {
           autoClose: 1500,
           onClose: () => window.location.reload(),
         });
         setFormDisabled(true);
       } else {
-        toast.error('Failed to create order: ' + (response?.message || 'Unknown error'), {
-          autoClose: 5000,
-          onClose: () => window.location.reload(),
-        });
+        toast.error(
+          "Failed to create order: " + (response?.message || "Unknown error"),
+          {
+            autoClose: 5000,
+            onClose: () => window.location.reload(),
+          }
+        );
         setFormDisabled(true);
       }
     } catch (err) {
-      toast.error('Failed to create order: ' + err, { autoClose: 3000 }
-      );
+      toast.error("Failed to create order: " + err, { autoClose: 3000 });
       window.location.reload();
     }
   };
-  
 
   return (
-    <div className="h-[78vh] min-h-[78vh] max-h-[78vh] overflow-y-scroll">
-      <div className="flex flex-col mt-3">
-      <ToastContainer />
-        <CustomDatePicker onDateChange={handleDateChange} label="Order date" />
-        {errors.orderDate && (
-          <p className="text-red-500 text-xs">{errors.orderDate}</p>
-        )}
-      </div>
-    
-    {/* Scheduled Dispatch Date Picker */}
-    <div className="flex flex-col mt-3">
-      <CustomDatePicker
-        onDateChange={handleScheduledDispatchDateChange} // New change handler
-        label="Scheduled Dispatch Date" // New label
-      />
-      {errors.scheduledDispatchDate && (
-        <p className="text-red-500 text-xs">{errors.scheduledDispatchDate}
+    <>
+      <div className=" relative overflow-y-scroll scrollbar-none pb-10 text-black">
+        <ToastContainer position="bottom-center" />
+        <h2 className="text-base font-semibold text-[#111928] mb-1">
+          Create Custom Order
+        </h2>
+        <p className="text-sm font-normal text-[#4B5563] mb-6">
+          Create the purchase order to be made.
         </p>
-      )}
-    </div>
-
-      <div className="flex flex-col">
-        <label>Order Id</label>
-        <Input
-          bgColor={"bg-[#F8F6F2]"}
-          radius={"rounded-lg"}
-          height={"h-[3.5vw] min-h-[3.5vh]"}
-          padding={"p-[1vw]"}
-          type={"text"}
-          color={"text-[#838481]"}
-          textSize={"text-[1vw]"}
-          fontWeight={"font-medium"}
-          name="orderId"
-          value={formData.orderId}
-          onChange={handleChange}
-        />
-        {errors.orderId && (
-          <p className="text-red-500 text-xs">{errors.orderId}</p>
-        )}
-      </div>
-
-      <div className="flex flex-col">
-        <label>Order Title</label>
-        <Input
-          bgColor={"bg-[#F8F6F2]"}
-          radius={"rounded-lg"}
-          height={"h-[3.5vw] min-h-[3.5vh]"}
-          padding={"p-[1vw]"}
-          type={"text"}
-          color={"text-[#838481]"}
-          textSize={"text-[1vw]"}
-          fontWeight={"font-medium"}
-          name="orderTitle"
-          value={formData.orderTitle}
-          onChange={handleChange}
-        />
-        {errors.orderTitle && (
-          <p className="text-red-500 text-xs">{errors.orderTitle}</p>
-        )}
-      </div>
-
-      <div className="flex flex-col">
-        <label>Platform/Mode</label>
-        <select
-          className="bg-[#F8F6F2] rounded-lg h-[3.5vw] min-h-[3.5vh] p-[1vw] text-[#838481] text-[1vw] font-medium"
-          value={selectedPlatform}
-          onChange={handlePlatformChange}
-        >
-          <option value="">Select Platform</option>
-          <option value="B2B">B2B</option>
-          <option value="Custom">Custom</option>
-          <option value="Custom-Amazon">Custom-Amazon</option>
-          <option value="Custom-Easyecom">Custom-Easyecom</option>
-        </select>
-        {errors.platform && (
-          <p className="text-red-500 text-xs">{errors.platform}</p>
-        )}
-      </div>
-
-      <div className="flex flex-col">
-        <label>Retailer</label>
-        <Input
-          bgColor={"bg-[#F8F6F2]"}
-          radius={"rounded-lg"}
-          height={"h-[3.5vw] min-h-[3.5vh]"}
-          padding={"p-[1vw]"}
-          type={"text"}
-          color={"text-[#838481]"}
-          textSize={"text-[1vw]"}
-          fontWeight={"font-medium"}
-          name="retailer"
-          value={formData.retailer}
-          onChange={handleChange}
-        />
-      </div>
-
-      <div className="flex flex-col">
-        <label>Location</label>
-        <Input
-          bgColor={"bg-[#F8F6F2]"}
-          radius={"rounded-lg"}
-          height={"h-[3.5vw] min-h-[3.5vh]"}
-          padding={"p-[1vw]"}
-          type={"text"}
-          color={"text-[#838481]"}
-          textSize={"text-[1vw]"}
-          fontWeight={"font-medium"}
-          name="location"
-          value={formData.location}
-          onChange={handleChange}
-        />
-      </div>
-
-      <div className="flex flex-col">
-        <label>Tracking Number</label>
-        <Input
-          bgColor={"bg-[#F8F6F2]"}
-          radius={"rounded-lg"}
-          height={"h-[3.5vw] min-h-[3.5vh]"}
-          padding={"p-[1vw]"}
-          type={"text"}
-          color={"text-[#838481]"}
-          textSize={"text-[1vw]"}
-          fontWeight={"font-medium"}
-          name="trackingNumber"
-          value={formData.trackingNumber}
-          onChange={handleChange}
-        />
-      </div>
-
-      <div className="flex flex-col">
-        <label>Remarks</label>
-        <Input
-          bgColor={"bg-[#F8F6F2]"}
-          radius={"rounded-lg"}
-          height={"h-[3.5vw] min-h-[3.5vh]"}
-          padding={"p-[1vw]"}
-          type={"text"}
-          color={"text-[#838481]"}
-          textSize={"text-[1vw]"}
-          fontWeight={"font-medium"}
-          name="remarks"
-          value={formData.remarks}
-          onChange={handleChange}
-        />
-      </div>
-
-      <label>List Of Products</label>
-      <div className="flex flex-col p-4 border-2 border-[#F8F6F2] rounded-lg bg-white">
-        <div className="flex flex-col">
-          <label>Select Category</label>
-          <CategoryDropdown bgColor={"#F8F6F2"} options={allCategories} />
-        </div>
-        <div className="flex flex-col">
-          <label>Select Product</label>
-          <ProductDropdown
-            name="product_id"
-            bgColor={"#F8F6F2"}
-            options={allProductsByCatId}
+        {/* Order date */}
+        <div className="flex flex-col mb-6">
+          <CustomDatePicker
+            onDateChange={handleDateChange}
+            label="Order date"
           />
+          {errors.orderDate && (
+            <p className="text-red-500 text-xs">{errors.orderDate}</p>
+          )}
         </div>
-        <div className="flex flex-col">
-          <label>Quantity</label>
+
+        {/* Scheduled Dispatch Date Picker */}
+        <div className="flex flex-col mb-6">
+          <CustomDatePicker
+            onDateChange={handleScheduledDispatchDateChange} // New change handler
+            label="Scheduled Dispatch Date" // New label
+          />
+          {errors.scheduledDispatchDate && (
+            <p className="text-red-500 text-xs">
+              {errors.scheduledDispatchDate}
+            </p>
+          )}
+        </div>
+
+        <div className="flex flex-col mb-6">
+          <Label isRequired={true} text="Order Id" />
           <Input
-            bgColor={"bg-[#F8F6F2]"}
-            radius={"rounded-lg"}
-            height={"h-[3.5vw] min-h-[3.5vh]"}
-            padding={"p-[1vw]"}
-            type={"number"}
-            color={"text-[#838481]"}
-            textSize={"text-[1vw]"}
-            fontWeight={"font-medium"}
-            name="quantity"
-            placeholder={"Enter Quantity here"}
-            value={productQuantity}
-            onChange={(e) => setProductQuantity(e.target.value)}
+            type={"text"}
+            name="orderId"
+            value={formData.orderId}
+            onChange={handleChange}
+            placeholder="Enter Order Id"
+          />
+          {errors.orderId && (
+            <p className="text-red-500 text-xs">{errors.orderId}</p>
+          )}
+        </div>
+
+        <div className="flex flex-col mb-6">
+          <Label isRequired={true} text="Order Title" />
+          <Input
+            type={"text"}
+            name="orderTitle"
+            value={formData.orderTitle}
+            onChange={handleChange}
+            placeholder="Enter Order Title"
+          />
+          {errors.orderTitle && (
+            <p className="text-red-500 text-xs">{errors.orderTitle}</p>
+          )}
+        </div>
+
+        <div className="flex flex-col mb-6">
+          <Label isRequired={true} text="Platform mode" />
+          <select
+            className="bg-white rounded-xl h-10 px-4 py-2 text-[#838481] text-sm border border-[#DFE4EA] font-normal"
+            value={selectedPlatform}
+            onChange={handlePlatformChange}
+          >
+            <option value="">Select Platform</option>
+            <option value="B2B">B2B</option>
+            <option value="Custom">Custom</option>
+            <option value="Custom-Amazon">Custom-Amazon</option>
+            <option value="Custom-Easyecom">Custom-Easyecom</option>
+          </select>
+          {errors.platform && (
+            <p className="text-red-500 text-xs">{errors.platform}</p>
+          )}
+        </div>
+
+        <div className="flex flex-col mb-6">
+          <Label isRequired={true} text="Retailer" />
+          <Input
+            type={"text"}
+            name="retailer"
+            value={formData.retailer}
+            onChange={handleChange}
+            placeholder="Enter Retailer"
           />
         </div>
 
-        <div onClick={handleAddProduct} className="mt-2">
-          <Button
-            title={"Add Product"}
-            bgColor={"bg-[rgb(79,201,218)]"}
-            radius={"rounded-lg"}
-            height={"h-[3vw] min-h-[3vh]"}
-            padding={"p-[1vw]"}
-            color={"text-[#ffff]"}
-            textSize={"text-[1vw]"}
-            fontWeight={"font-medium"}
-            width={"w-[10vw]"}
+        <div className="flex flex-col mb-6">
+          <Label isRequired={true} text="Location" />
+          <Input
+            placeholder="Enter Location"
+            type={"text"}
+            name="location"
+            value={formData.location}
+            onChange={handleChange}
           />
         </div>
-        {errors.listOfProducts && (
-          <p className="text-red-500 text-xs">{errors.listOfProducts}</p>
-        )}
 
-        <div className="mt-2">
-          {formData.listOfProducts.length > 0 && <label>Products :</label>}
+        <div className="flex flex-col mb-6">
+          <Label isRequired={true} text="Tracking Number" />
+          <Input
+            type={"text"}
+            placeholder="Enter Tracking number"
+            name="trackingNumber"
+            value={formData.trackingNumber}
+            onChange={handleChange}
+          />
+        </div>
 
-          <ul className="flex flex-row gap-4">
-            {formData.listOfProducts.map((product, index) => (
+        <div className="flex flex-col mb-6">
+          <Label isRequired={true} text="Remarks" />
+          <Input
+            type={"text"}
+            placeholder="Enter Remarksx"
+            name="remarks"
+            value={formData.remarks}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div>
+          <h2 className="text-sm font-semibold text-[#111928] mb-1">
+            List Of Products -{" "}
+          </h2>
+
+          <div className="mt-3 bg-gray-1 p-3 rounded-lg">
+            <div className="flex flex-col mb-6 ">
+              <Label isRequired={true} text="Select Category" />
+              <CategoryDropdown bgColor={"#F8F6F2"} options={allCategories} />
+            </div>
+
+            <div className="flex flex-col mb-6">
+              <Label isRequired={true} text="Select Product" />
+              <ProductDropdown
+                name="product_id"
+                bgColor={"#F8F6F2"}
+                options={allProductsByCatId}
+              />
+            </div>
+
+            <div className="flex flex-col mb-6">
+              <Label isRequired={true} text="Quantity" />
+              <Input
+                type={"number"}
+                name="quantity"
+                value={productQuantity}
+                onChange={(e) => setProductQuantity(e.target.value)}
+                placeholder={"Enter Quantity"}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="mb-6 mt-2">
+          <SecondaryButton
+            title="Add Products"
+            size="full"
+            onClick={handleAddProduct}
+          />
+        </div>
+
+        <div className="mt-4 h-auto w-full mb-8">
+          <ul>
+            {formData.listOfProducts.length > 0 && (
+              <h2 className="text-base font-semibold text-dark mb-2">
+                Selected Items: {formData.listOfProducts.length}
+              </h2>
+            )}
+
+            {formData.listOfProducts.map((data, idx) => (
               <li
-                key={index}
-                className="awb-number border bg-[#F8F6F2] text-black rounded-lg p-2  text-sm text-start"
-                onClick={() => handleRemoveProductsFromList(index)}
+                key={idx}
+                className="shadow-sm rounded-lg py-3 bg-white flex items-center justify-between space-x-4 px-4"
               >
-                <span className="remove-text text-xs font-semibold">
-                  Remove
-                </span>
-                <div className="flex flex-col">
-                  <span className="number px-3 text-black">
-                    Product Name: {product?.productName}
-                  </span>
-                  <span className="number px-3 text-black">
-                    Product Quantity: {product?.quantity}
-                  </span>
+                <div className="flex-grow min-w-0 py-2 px-1 rounded-lg bg-gray-1">
+                  <div className="flex justify-between items-center mb-2 ">
+                    <span className="text-dark font-medium text-sm">
+                      {data.productName}
+                    </span>
+                  </div>
+
+                  {/* Quantity, Weight, and Bill Number in One Row */}
+                  <div className="flex justify-between gap-6 overflow-hidden">
+                    <div className="flex gap-x-2">
+                      <span className="font-normal text-sm text-dark-4">
+                        Quantity:
+                      </span>
+                      <span className="font-normal text-sm text-dark-4">
+                        {data.quantity}
+                      </span>
+                    </div>
+                  </div>
                 </div>
+
+                <button
+                  className="flex-shrink-0 ml-4"
+                  onClick={() => handleRemoveProductsFromList(idx)}
+                  disabled={formDisabled}
+                >
+                  🗑️
+                </button>
               </li>
             ))}
           </ul>
         </div>
+
+        {formDisabled && (
+          <div
+            className="fixed top-0 left-0 w-full h-full bg-gray-400 opacity-50 z-50"
+            style={{ zIndex: 1000 }}
+          />
+        )}
       </div>
 
-      <div className="flex flex-row gap-5">
-        <div className="mt-2" onClick={onFormSubmit}>
-          <Button
-            title={"Create Order"}
-            bgColor={"bg-[rgb(79,201,218)]"}
-            radius={"rounded-lg"}
-            height={"h-[3vw] min-h-[3vh]"}
-            padding={"p-[1vw]"}
-            color={"text-[#ffff]"}
-            textSize={"text-[1vw]"}
-            fontWeight={"font-medium"}
-            width={"w-[14vw]"}
-          />
+      <div className="absolute bottom-0 left-0 w-full border border-t-stroke  bg-white p-2">
+        <div className="flex gap-x-2">
+          <div className="flex-1">
+            <SecondaryButton title="Cancel" size="full" onClick={onCancel} />
+          </div>
+          <div className="flex-1">
+            <PrimaryButton
+              title="Create Order"
+              onClick={onFormSubmit}
+              // disabled={finalFormData.length === 0}
+              size="full"
+            />
+          </div>
         </div>
       </div>
-
-      {formDisabled && (
-        <div
-          className="fixed top-0 left-0 w-full h-full bg-gray-400 opacity-50 z-50"
-          style={{ zIndex: 1000 }}
-        />
-      )}
-      
-    </div>
+    </>
   );
 };
 
 export default CreateCustomOrderForm;
-

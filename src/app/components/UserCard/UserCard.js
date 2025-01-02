@@ -48,7 +48,7 @@
     return (
       <div className="relative w-full">
         <div
-          className="flex items-center gap-3 border border-stroke -ml-2 rounded-lg px-2 py-2 w-[95%] cursor-pointer"
+          className="flex items-center gap-3 border border-stroke -ml-2 rounded-lg px-2 pr-8 py-2 w-fit cursor-pointer"
           onClick={handleOpenDialog}
         >
           {/* Icon Section */}

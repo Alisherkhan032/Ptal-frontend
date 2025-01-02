@@ -188,7 +188,7 @@ export const items = [
     id: 5,
     label: "Dispatch",
     iconKey: "dispatch",
-    path: "/dispatch/process_order_details",
+    path: "/dispatch/processed_order_list",
     subItems: [
       // {
       //   id: 11,
@@ -205,31 +205,31 @@ export const items = [
       //   label: "Process Orders",
       //   path: "/dispatch/process_order",
       // },
-      {
-        id: 14,
-        label: "Process Order",
-        path: "/dispatch/process_order_details",
-      },
+      // {
+      //   id: 14,
+      //   label: "Process Order",
+      //   path: "/dispatch/process_order_details",
+      // },
       {
         id: 15,
         label: "Fulfilled Order Details",
         path: "/dispatch/processed_order_list",
       },
-      {
-        id: 16,
-        label: "Inward Amazon Order CSV",
-        path : "/dispatch/inward_amazon_order",
-      },
-      {
-        id: 17,
-        label: "Process Amazon Orders",
-        path : "/dispatch/process_amazon_orders",
-      },
-      {
-        id : 18,
-        label: "Create Engraving Order PO",
-        path : "/dispatch/create_engraving_order_po"
-      }
+      // {
+      //   id: 16,
+      //   label: "Inward Amazon Order CSV",
+      //   path : "/dispatch/inward_amazon_order",
+      // },
+      // {
+      //   id: 17,
+      //   label: "Process Amazon Orders",
+      //   path : "/dispatch/process_amazon_orders",
+      // },
+      // {
+      //   id : 18,
+      //   label: "Create Engraving Order PO",
+      //   path : "/dispatch/create_engraving_order_po"
+      // }
       // {
       //   id : 16,
       //   label : "View Custom Orders",
@@ -265,28 +265,28 @@ export const items = [
     id: 7,
     label: "Admin",
     iconKey: "admin",
-    path: "/admin/create_raw_material",
+    path: "/admin/view_bulk_raw_material_po",
     subItems: [
-      {
-        id: 72,
-        label: "Create Raw Material",
-        path: "/admin/create_raw_material",
-      },
-      {
-        id: 72,
-        label: "Create Vendor",
-        path: "/admin/create_vendor",
-      },
-      {
-        id: 73,
-        label: "Create Product",
-        path: "/admin/create_product",
-      },
-      {
-        id: 74,
-        label: "Raise Bulk Raw Material PO",
-        path: "/admin/raise_bulk_raw_material_po",
-      },
+      // {
+      //   id: 72,
+      //   label: "Create Raw Material",
+      //   path: "/admin/create_raw_material",
+      // },
+      // {
+      //   id: 72,
+      //   label: "Create Vendor",
+      //   path: "/admin/create_vendor",
+      // },
+      // {
+      //   id: 73,
+      //   label: "Create Product",
+      //   path: "/admin/create_product",
+      // },
+      // {
+      //   id: 74,
+      //   label: "Raise Bulk Raw Material PO",
+      //   path: "/admin/raise_bulk_raw_material_po",
+      // },
       {
         id: 75,
         label: "View Bulk Raw Material PO",
@@ -299,23 +299,23 @@ export const items = [
     id: 8,
     label: "Custom Order",
     iconKey: "custom",
-    path: "/b2b/create_custom_order",
+    path : "/b2b/view_custom_orders",
     subItems: [
-      {
-        id: 81,
-        label: "Create Custom Order",
-        path: "/b2b/create_custom_order",
-      },
+      // {
+      //   id: 81,
+      //   label: "Create Custom Order",
+      //   path: "/b2b/create_custom_order",
+      // },
       {
         id : 82,
         label : "View Custom Orders",
         path : "/b2b/view_custom_orders"
       },
-      {
-        id : 83,
-        label : "Process Custom Orders",
-        path : "/b2b/process_custom_orders"
-      },
+      // {
+      //   id : 83,
+      //   label : "Process Custom Orders",
+      //   path : "/b2b/process_custom_orders"
+      // },
     ],
   },
   {

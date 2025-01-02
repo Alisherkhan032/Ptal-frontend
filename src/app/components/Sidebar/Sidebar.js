@@ -13,24 +13,26 @@ const Sidebar = () => {
   const { userInfo } = useSelector((state) => state.auth);
 
   // Extract team name from pathname or default to 'storage'
- const extractTeamName = (path) => { 
-  const segments = path.split('/').filter(Boolean); 
-  return segments.length > 0 ? segments[0] : 'storage'; 
-}; 
+  const extractTeamName = (path) => {
+    const segments = path.split("/").filter(Boolean);
+    return segments.length > 0 ? segments[0] : "storage";
+  };
 
   // Determine active item based on pathname
-  const determineActiveItem = () => { 
-    const teamName = extractTeamName(pathname); 
-     
-    const activeItem = items.find(item => {
-      // Extract the team name from the item's path
-      const itemTeamName = item.path.split('/')[1];
-      
-      // Compare only the team names
+  const determineActiveItem = () => {
+    const teamName = extractTeamName(pathname);
+
+    // Special case for admin path
+    if (teamName === "admin") {
+      return "7";
+    }
+
+    const activeItem = items.find((item) => {
+      const itemTeamName = item.path.split("/")[1];
       return teamName === itemTeamName;
-    }); 
-  
-    return activeItem?.id || '2'; // Fallback to default 
+    });
+
+    return activeItem?.id || "2"; // Fallback to default
   };
 
   const [activeItem, setActiveItem] = useState(determineActiveItem());
@@ -42,7 +44,6 @@ const Sidebar = () => {
 
   const handleItemClick = (item) => {
     setActiveItem(item.id);
-    // Use Next.js routing instead of window.location
     window.location.href = item.path;
   };
 
@@ -62,45 +63,59 @@ const Sidebar = () => {
 
       {/* Sidebar Items */}
       <div className="overflow-y-auto flex-1 px-4 scrollbar-none bg-[#f9fafc]">
-        {items.map((item) => (
-          <div key={item.id} className="mb-2">
-            <button
-              className={`w-full text-sm font-medium py-2 px-4 text-left flex items-center gap-3 rounded-lg ${
-                activeItem === item.id
-                  ? "bg-gray-2 text-primary"
-                  : "text-dark hover:bg-gray-2"
-              }`}
-              onClick={() => handleItemClick(item)}
-            >
-              <span
-                style={{
-                  color: activeItem === item.id ? "#3758F9" : "#9CA3AF",
-                }}
+        {items
+          .filter((item) => item.label !== "Admin")
+          .map((item) => (
+            <div key={item.id} className="mb-2">
+              <button
+                className={`w-full text-sm font-medium py-2 px-4 text-left flex items-center gap-3 rounded-lg ${
+                  activeItem === item.id
+                    ? "bg-gray-2 text-primary"
+                    : "text-dark hover:bg-gray-2"
+                }`}
+                onClick={() => handleItemClick(item)}
               >
-                {React.cloneElement(ICONS[item.iconKey], {
-                  width: 20,
-                  height: 20,
-                })}
-              </span>
-              {item.label}
-            </button>
-          </div>
-        ))}
+                <span
+                  style={{
+                    color: activeItem === item.id ? "#3758F9" : "#9CA3AF",
+                  }}
+                >
+                  {React.cloneElement(ICONS[item.iconKey], {
+                    width: 20,
+                    height: 20,
+                  })}
+                </span>
+                {item.label}
+              </button>
+            </div>
+          ))}
       </div>
 
       {/* Bottom Section */}
       <div className="flex flex-col px-7 py-2 mt-3 bg-[#f9fafc]">
         {/* Admin Settings */}
         <div
-          className={`flex items-center gap-3 mb-4 cursor-pointer rounded-lg ${
-            activeItem === "admin_settings"
+          className={`flex items-center gap-3 p-2 mb-4 cursor-pointer rounded-lg ${
+            activeItem === "7"
               ? "bg-gray-2 text-primary"
               : "text-dark hover:bg-gray-2"
           }`}
-          onClick={() => handleItemClick({ id: "admin_settings", path: "#" })}
+          onClick={() =>
+            handleItemClick({
+              id: "7",
+              path: "/admin/view_bulk_raw_material_po",
+            })
+          }
         >
-          <span className="size-6">
-            {ICONS["settings"]}
+          <span
+            style={{
+              color: activeItem === "7" ? "#3758F9" : "#9CA3AF",
+            }}
+          >
+            {React.cloneElement(ICONS["settings"], {
+              width: 20,
+              height: 20,
+            })}
           </span>
           <span className="text-sm">Admin Settings</span>
         </div>
@@ -114,4 +129,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar; 
+export default Sidebar;

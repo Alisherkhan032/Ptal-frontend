@@ -177,8 +177,6 @@ const RaisePoFormComponent = ({ onCancel }) => {
             window.location.reload(); // Refresh the page after the toast is shown
           },
           disableClick: true,
-          className:
-            "bg-green-light-6 text-green-dark p-4 rounded-lg shadow-lg text-sm",
         });
         setFormDisabled(true); // Disable form interactions when toaster is shown
       }
@@ -243,10 +241,14 @@ const RaisePoFormComponent = ({ onCancel }) => {
 
         <div>
           <h2 className="text-sm font-semibold text-[#111928] mb-1">
-            Confgure PO items -{" "}
+            Configure PO items -{" "}
           </h2>
           <div className="mt-3 bg-gray-1 p-3 rounded-lg">
             <div className="flex flex-col mb-6 ">
+              <label className="block text-[#111928] text-sm font-medium mb-1">
+                Category
+                <span className="text-[#9CA3AF] ml-[2px]">*</span>
+              </label>
               <MaterialCategoryFilter
                 bgColor={"#F8F6F2"}
                 name="Category"
@@ -278,14 +280,7 @@ const RaisePoFormComponent = ({ onCancel }) => {
                   <span className="text-[#9CA3AF] ml-[2px]">*</span>
                 </label>
                 <Input
-                  radius={"rounded-xl"}
-                  height={"h-10"}
-                  padding={"px-4 py-4"}
                   type={"number"}
-                  color={"text-[#838481]"}
-                  textSize={"text-sm"}
-                  fontWeight={"font-normal"}
-                  borderColor={"border-[#DFE4EA]"}
                   name="quantity"
                   value={formData.quantity}
                   onChange={handleChange}
@@ -306,14 +301,7 @@ const RaisePoFormComponent = ({ onCancel }) => {
                   <span className="text-[#9CA3AF] ml-[2px]">*</span>
                 </label>
                 <Input
-                  radius={"rounded-xl"}
-                  height={"h-10"}
-                  padding={"px-4 py-4"}
-                  borderColor={"border-[#DFE4EA]"}
                   type={"number"}
-                  color={"text-[#838481]"}
-                  textSize={"text-sm"}
-                  fontWeight={"font-normal"}
                   name="weight"
                   value={formData.weight}
                   onChange={handleChange}
@@ -359,6 +347,7 @@ const RaisePoFormComponent = ({ onCancel }) => {
         <div className="mt-2">
           <SecondaryButton
             title="+ Add items"
+            size='full'
             onClick={addMultipleRawMaterials}
           />
         </div>
@@ -434,14 +423,14 @@ const RaisePoFormComponent = ({ onCancel }) => {
       <div className="absolute bottom-0 left-0 w-full border border-t-stroke  bg-white p-2">
         <div className="flex gap-x-2">
           <div className="flex-1">
-            <SecondaryButton title="Cancel" width='w-full' onClick={onCancel} />
+            <SecondaryButton title="Cancel" size='full' onClick={onCancel} />
           </div>
           <div className="flex-1">
             <PrimaryButton
               title="Raise PO"
               onClick={createNewPO}
               disabled={finalFormData.length === 0}
-              width="w-full"
+              size='full'
             />
           </div>
         </div>

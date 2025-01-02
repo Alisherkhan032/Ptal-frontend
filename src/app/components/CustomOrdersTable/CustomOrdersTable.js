@@ -1,8 +1,19 @@
-'use client';
-import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import moment from 'moment';
-import { orderServices } from '@/app/services/oderService';
+"use client";
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import moment from "moment";
+import { orderServices } from "@/app/services/oderService";
+import ActionDropdown from "../ActionDropdown/ActionDropdown";
+import DynamicTableWithoutAction from "@/app/components/DynamicTableWithoutAction/DynamicTableWithoutAction";
+import {
+  stickyActionColumnClassname,
+  stickyActionRowClassname,
+} from "@/app/utils/stickyActionClassname";
+import RightSidebar from "@/app/components/RaisePoFormSideBar/RaisePoFormSideBar";
+import DynamicTableInsideSidebar from "@/app/components/DynamicTableInsideSidebar/DynamicTableInsideSidebar";
+import EditCustomOrder from "../EditCustomOrder/EditCustomOrder";
+import PoFilterBar from "@/app/components/PoFilterBar/PoFilterBar";
+import { ICONS } from "@/app/utils/icons";
 
 const CustomOrderTable = () => {
   const { allCustomOrders } = useSelector((state) => state.order);
@@ -11,53 +22,94 @@ const CustomOrderTable = () => {
     return new Date(b.updatedAt) - new Date(a.updatedAt);
   });
   const [filteredData, setFilteredData] = useState(sortedMaterials);
-  
+
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [sidebarType, setSidebarType] = useState(null);
+  const [selectedPo, setSelectedPo] = useState(null);
+  const [sidebarContent, setSidebarContent] = useState(null);
+
   // Modal states
   const [modalOpen, setModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [editOrderData, setEditOrderData] = useState({});
 
-  // Pagination logic
-  const [currentPage, setCurrentPage] = useState(1);
-  const recordsPerPage = 10;
-  const lastIndex = currentPage * recordsPerPage;
-  const firstIndex = lastIndex - recordsPerPage;
-  const records = filteredData.slice(firstIndex, lastIndex);
-  const npage = Math.ceil(filteredData.length / recordsPerPage);
+  const currentDateAndFileName = `Custom_Order_${moment().format(
+    "DD-MMM-YYYY"
+  )}`;
+  const [searchText, setSearchText] = useState("");
 
-  const currentDateAndFileName = `Custom_Order_${moment().format('DD-MMM-YYYY')}`;
+  const applyFilters = () => {
+    let data = allCustomOrders;
+    data = data.filter((item) =>
+      searchKeys.some((key) =>
+        searchNested(item[key], searchText.toLowerCase(), key)
+      )
+    );
+
+    setFilteredData(data);
+  };
+
+  const searchNested = (obj, query, key) => {
+    if (Array.isArray(obj)) {
+      return obj.some((item) => searchNested(item, query, key));
+    }
+    if (typeof obj === "object" && obj !== null) {
+      return Object.values(obj).some((val) => searchNested(val, query, key));
+    }
+    if (typeof obj === "string") {
+      return obj.toLowerCase().includes(query);
+    }
+    if (typeof obj === "number" && key === "quantity") {
+      return obj.toString().includes(query);
+    }
+    return false;
+  };
+
+  useEffect(() => {
+    applyFilters();
+  }, [allCustomOrders, searchText]);
 
   // Convert data to CSV
   const convertToCSV = (data) => {
     const headers = [
-      'ORDER ID',
-      'ORDER TITLE',
-      'CREATED AT',
-      'ORDER DATE',
-      'SCHEDULED DISPATCH DATE',
-      'PLATFORM/MODE',
-      'NUMBER OF DISTINCT SKU',
-      'DESIRED QUANTITY',
-      'FULFILLED QUANTITY',
-      'RETAILER',
-      'LOCATION',
-      'TRACKING NUMBER',
-      'STATUS',
-      'FULFILLED AT',
-      'REMARKS',
+      "ORDER ID",
+      "ORDER TITLE",
+      "CREATED AT",
+      "ORDER DATE",
+      "SCHEDULED DISPATCH DATE",
+      "PLATFORM/MODE",
+      "NUMBER OF DISTINCT SKU",
+      "DESIRED QUANTITY",
+      "FULFILLED QUANTITY",
+      "RETAILER",
+      "LOCATION",
+      "TRACKING NUMBER",
+      "STATUS",
+      "FULFILLED AT",
+      "REMARKS",
     ];
-  
+
     const rows = data.map((order) => {
-      const totalQuantity = order?.listOfProducts.reduce((acc, product) => acc + product.quantity, 0);
-      const totalFulfilledQuantity = order?.listOfProducts.reduce((acc, product) => acc + (product.fulfilledQuantity || 0), 0);
-  
+      const totalQuantity = order?.listOfProducts.reduce(
+        (acc, product) => acc + product.quantity,
+        0
+      );
+      const totalFulfilledQuantity = order?.listOfProducts.reduce(
+        (acc, product) => acc + (product.fulfilledQuantity || 0),
+        0
+      );
+
       return [
         order?.orderId,
         order?.orderTitle,
-        order?.createdAt ? moment(order.createdAt).format('DD MMM YYYY HH:mm') : '',
-        order?.orderDate ? moment(order.orderDate).format('DD MMM YYYY') : '',
-        order?.scheduledDispatchDate ? moment(order.scheduledDispatchDate).format('DD MMM YYYY') : '',
+        order?.createdAt
+          ? moment(order.createdAt).format("DD MMM YYYY HH:mm")
+          : "",
+        order?.orderDate ? moment(order.orderDate).format("DD MMM YYYY") : "",
+        order?.scheduledDispatchDate
+          ? moment(order.scheduledDispatchDate).format("DD MMM YYYY")
+          : "",
         order?.platform,
         order?.listOfProducts.length,
         totalQuantity,
@@ -66,38 +118,44 @@ const CustomOrderTable = () => {
         order?.location,
         order?.trackingNumber,
         order?.status,
-        order?.fulfilledAt ? moment(order.fulfilledAt).format('DD MMM YYYY HH:mm') : '',
+        order?.fulfilledAt
+          ? moment(order.fulfilledAt).format("DD MMM YYYY HH:mm")
+          : "",
         order?.remarks,
       ];
     });
-  
+
     const csvContent =
-      'data:text/csv;charset=utf-8,' +
-      [headers.join(','), ...rows.map((row) => row.join(','))].join('\n');
-  
+      "data:text/csv;charset=utf-8," +
+      [headers.join(","), ...rows.map((row) => row.join(","))].join("\n");
+
     const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', currentDateAndFileName);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", currentDateAndFileName);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
-  
-  // Handle page change
-  const prePage = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
 
-  const nextPage = () => {
-    if (currentPage < npage) setCurrentPage(currentPage + 1);
-  };
-
-  const changePage = (pageNumber) => setCurrentPage(pageNumber);
+  const searchKeys = [
+    "orderId",
+    "orderTitle",
+    "orderDate",
+    "fulfilledBy",
+    "createdAt",
+    "status",
+    "scheduledDispatchDate",
+    "platform",
+    "quantity",
+    "retailer",
+    "location",
+    "trackingNumber",
+    "remarks",
+  ];
 
   useEffect(() => {
     setFilteredData(sortedMaterials);
-    setCurrentPage(1);
   }, [sortedMaterials]);
 
   // Modal functions
@@ -136,300 +194,256 @@ const CustomOrderTable = () => {
   };
 
   const handleSaveChanges = async () => {
-console.log ("data =====",editOrderData);
-    const result = await orderServices.editOrderByOrderInternalId(editOrderData);
+    console.log("data =====", editOrderData);
+    const result = await orderServices.editOrderByOrderInternalId(
+      editOrderData
+    );
     if (result.success) {
-      alert('Order updated successfully!');
+      alert("Order updated successfully!");
       closeEditModal();
     } else {
-      alert('Failed to update order: ' + result.error);
+      alert("Failed to update order: " + result.error);
     }
-
   };
 
   function formatStatus(status) {
     if (!status) return status;
-  
+
     // Replace underscores with spaces and split the string into words
-    const words = status.replace(/_/g, ' ').split(' ');
-  
+    const words = status.replace(/_/g, " ").split(" ");
+
     // Capitalize the first letter of each word
     const formattedWords = words.map(
-      word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+      (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
     );
-  
+
     // Join the words back into a single string
-    return formattedWords.join(' ');
+    return formattedWords.join(" ");
   }
-  
 
   // Handle Delete Order
-const handleDeleteOrder = async (orderId) => {
-  const confirmation = window.confirm(
-    'Are you sure you want to delete this order? This action is irreversible.'
-  );
+  const handleDeleteOrder = async (orderId) => {
+    const confirmation = window.confirm(
+      "Are you sure you want to delete this order? This action is irreversible."
+    );
 
-  if (confirmation) {
-    try {
-      const result = await orderServices.deleteOrderByOrderId(orderId);
-   
-      if (result.success) {
-        alert('Order deleted successfully!');
-        closeEditModal();
-        window.location.reload();
-        // Optionally, refresh orders if needed
-      } else {
-        alert('Failed to delete order: ' + result.error);
+    if (confirmation) {
+      try {
+        const result = await orderServices.deleteOrderByOrderId(orderId);
+
+        if (result.success) {
+          alert("Order deleted successfully!");
+          closeEditModal();
+          window.location.reload();
+          // Optionally, refresh orders if needed
+        } else {
+          alert("Failed to delete order: " + result.error);
+        }
+      } catch (error) {
+        alert("An error occurred: " + error.message);
       }
-    } catch (error) {
-      alert('An error occurred: ' + error.message);
     }
-  }
-};
+  };
 
+  const headings = {
+    createdAt: {
+      label: "Created On",
+      renderCell: (row) =>
+        moment(row?.createdAt).format("DD MMM YYYY") || "N/A",
+      isSticky: false,
+    },
+    orderId: {
+      label: "Order ID",
+      renderCell: (row) => row?.orderId || "N/A",
+      isSticky: false,
+    },
+    orderTitle: {
+      label: "Order Title",
+      renderCell: (row) => row?.orderTitle || "N/A",
+      isSticky: false,
+    },
+    orderDate: {
+      label: "Order Date",
+      renderCell: (row) =>
+        moment(row?.orderDate).format("DD MMM YYYY") || "N/A",
+      isSticky: false,
+    },
+    scheduledDispatchDate: {
+      label: "Scheduled Dispatch Date",
+      renderCell: (row) =>
+        moment(row?.scheduledDispatchDate).format("DD MMM YYYY") || "N/A",
+      isSticky: false,
+    },
+    platform: {
+      label: "Platform/Mode",
+      renderCell: (row) => row?.platform || "N/A",
+      isSticky: false,
+    },
+    numberOfDistinctSKU: {
+      label: "Number of Distinct SKU",
+      renderCell: (row) => row?.listOfProducts.length || "N/A",
+      isSticky: false,
+    },
+    totalQuantity: {
+      label: "Desired Quantity",
+      renderCell: (row) => {
+        const totalQuantity = row?.listOfProducts?.reduce(
+          (acc, product) => acc + (product?.quantity || 0),
+          0
+        );
+        return totalQuantity || "N/A";
+      },
+      isSticky: false,
+    },
+    totalfulfilledQuantity: {
+      label: "Fulfilled Quantity",
+      renderCell: (row) => {
+        const totalFulfilled = row?.listOfProducts?.reduce(
+          (acc, product) => acc + (product?.fulfilledQuantity || 0),
+          0
+        );
+        return totalFulfilled || "N/A";
+      },
+      isSticky: false,
+    },
+    retailer: {
+      label: "Retailer",
+      renderCell: (row) => row?.retailer || "N/A",
+      isSticky: false,
+    },
+    location: {
+      label: "Location",
+      renderCell: (row) => row?.location || "N/A",
+      isSticky: false,
+    },
+    trackingNumber: {
+      label: "Tracking Number",
+      renderCell: (row) => row?.trackingNumber || "N/A",
+      isSticky: false,
+    },
+    status: {
+      label: "Status",
+      renderCell: (row) => formatStatus(row?.status) || "N/A",
+    },
+    fulfilledAt: {
+      label: "Fulfilled At",
+      renderCell: (row) =>
+        moment(row?.fulfilledAt).format("DD MMM YYYY") || "N/A",
+      isSticky: false,
+    },
+    remarks: {
+      label: "Remarks",
+      renderCell: (row) => row?.remarks || "N/A",
+      isSticky: false,
+    },
+    action: {
+      label: "Action",
+      renderCell: (row) => (
+        <ActionDropdown
+          po={row}
+          actions={generatePOActions(row)}
+          customElement={customUpdateIcon(row)}
+        />
+      ),
+      isSticky: true,
+      stickyClassHeader: stickyActionColumnClassname,
+      stickyClassRow: stickyActionRowClassname,
+    },
+  };
+
+  const generatePOActions = (po) => [
+    {
+      label: "View Details",
+      condition: null,
+      action: () => handleSidebarContent("viewDetails", po),
+    },
+    // {
+    //   label: "Edit Order",
+    //   condition: () => po.status !== "shipped",
+    //   action: () => handleSidebarContent("editOrder", po),
+    // },
+  ];
+
+   const customUpdateIcon =(po) => [
+      {
+        label: ICONS.update,
+        condition: () => () => po.status !== "shipped",
+        action: (po) => handleSidebarContent("editOrder", po),
+      },
+    ];
+  
+
+  const openSidebar = (type, po) => {
+    setSidebarType(type);
+    setSelectedPo(po);
+    setIsSidebarOpen(true);
+  };
+
+  const closeSidebar = () => {
+    setIsSidebarOpen(false);
+    setSidebarType(null);
+    setSelectedPo(null);
+  };
+
+  const handleSidebarContent = (actionType, po = null) => {
+    const sidebarComponents = {
+      viewDetails: (
+        <DynamicTableInsideSidebar
+          headings={headingsInsideSidebar}
+          rows={po?.listOfProducts}
+          handleCancel={() => closeSidebar()}
+        />
+      ),
+      editOrder: (
+        <EditCustomOrder
+          editOrderData={po}
+          handleEditChange={handleEditChange}
+          handleSaveChanges={handleSaveChanges}
+          handleDeleteOrder={handleDeleteOrder}
+          closeModal={closeEditModal}
+          po={po}
+          onCancel={() => closeSidebar()}
+        />
+      ),
+    };
+
+    const content = sidebarComponents[actionType] || null;
+    setSidebarContent(content);
+    setIsSidebarOpen(!!content);
+  };
+
+  const headingsInsideSidebar = [
+    {
+      label: "SKU Code",
+      renderCell: (row) => row?.skuCode || "N/A",
+    },
+    {
+      label: "Desired Units",
+      renderCell: (row) => row?.quantity || "N/A",
+    },
+    {
+      label: "Fulfilled Units",
+      renderCell: (row) => row?.fulfilledQuantity || "N/A",
+    },
+  ];
 
   return (
-    <div className="relative overflow-x-auto sm:rounded-lg">
-      {/* Download CSV button */}
-      <th scope="col" className="px-6 py-3 text-right">
-  <button
-    onClick={() => convertToCSV(filteredData)}
-    className="bg-green-500 text-white px-4 py-2 text-sm font-semibold rounded-lg"
-  >
-    Download CSV
-  </button>
-</th>
+    <>
+      <PoFilterBar
+        searchText={searchText}
+        setSearchText={setSearchText}
+        convertToCSV={convertToCSV}
+        allPO={allCustomOrders}
+      />
+      <DynamicTableWithoutAction headings={headings} rows={filteredData} />
 
-
-
-      {/* Table */}
-      <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:text-gray-400">
-          <tr>
-            <th scope="col" className="px-6 py-3">ORDER ID</th>
-            <th scope="col" className="px-6 py-3">ORDER TITLE</th>
-            <th scope="col" className="px-6 py-3">CREATED AT</th>
-            <th scope="col" className="px-6 py-3">ORDER DATE</th>
-            <th scope="col" className="px-6 py-3">SCHEDULED DISPATCH DATE</th>
-            <th scope="col" className="px-6 py-3">PLATFORM/MODE</th>
-            <th scope="col" className="px-6 py-3">NUMBER OF DISTINCT SKU</th>
-            <th scope="col" className="px-6 py-3">DESIRED QUANTITY</th>
-            <th scope="col" className="px-6 py-3">FULFILLED QUANTITY</th>
-            <th scope="col" className="px-6 py-3">RETAILER</th>
-            <th scope="col" className="px-6 py-3">LOCATION</th>
-            <th scope="col" className="px-6 py-3">TRACKING NUMBER</th>
-            <th scope="col" className="px-6 py-3">STATUS</th>
-            <th scope="col" className="px-6 py-3">FULFILLED AT</th>
-            <th scope="col" className="px-6 py-3">REMARKS</th>
-            <th scope="col" className="px-6 py-3">VIEW ORDER PARTICULARS</th>
-            <th scope="col" className="px-6 py-3">EDIT ORDER</th>
-          </tr>
-        </thead>
-        <tbody>
-          {records.map((order, index) => {
-            const totalQuantity = order?.listOfProducts.reduce((accumulator, product) => {
-              return accumulator + product.quantity;
-            }, 0);
-            const totalfulfilledQuantity = order?.listOfProducts.reduce((accumulator, product) => {
-              return accumulator + (product.fulfilledQuantity || 0);
-            }, 0);
-            return (
-              <tr
-                key={index}
-                className={`${order.status === 'open' ? 'bg-white' : ''} ${order.status === 'shipped' ? 'bg-green-100' : order.status === 'partially_processed' ? 'bg-yellow-50' : ''}
-`}
-              >
-                <td className="px-6 py-4 font-medium text-gray-900">{order?.orderId}</td>
-                <td className="px-6 py-4">{order?.orderTitle}</td>
-                <td className="px-6 py-4">{order?.createdAt ? moment(order?.createdAt).format('DD MMM YYYY HH:mm') : ''}</td>
-                <td className="px-6 py-4">{order?.orderDate ? moment(order?.orderDate).format('DD MMM YYYY') : ''}</td>
-                <td className="px-6 py-4">{order?.scheduledDispatchDate ? moment(order?.scheduledDispatchDate).format('DD MMM YYYY') : ''}</td>
-                <td className="px-6 py-4">{order?.platform}</td>
-                <td className="px-6 py-4">{order?.listOfProducts.length}</td>
-                <td className="px-6 py-4">{totalQuantity}</td>
-                <td className="px-6 py-4">{totalfulfilledQuantity}</td>
-                <td className="px-6 py-4">{order?.retailer}</td>
-                <td className="px-6 py-4">{order?.location}</td>
-                <td className="px-6 py-4">{order?.trackingNumber}</td>
-                <td className="px-6 py-4">{formatStatus(order?.status)}</td>
-                <td className="px-6 py-4">{order?.fulfilledAt ? moment(order?.fulfilledAt).format('DD MMM YYYY HH:mm') : ''}</td>
-                <td className="px-6 py-4">{order?.remarks}</td>
-                <td className="px-6 py-4">
-                  <button
-                    onClick={() => openModal(order)}
- className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition duration-200"
-                  >
-                    View Details
-                  </button>
-                </td>
-                <td className="px-6 py-4">
-  <button
-    onClick={() => openEditModal(order)}
-    className={`bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 transition duration-200 ${
-      order.status === 'shipped' ? 'opacity-50 cursor-not-allowed' : ''
-    }`}
-    disabled={order.status === 'shipped'} // Disable button if the order is fulfilled
-  >
-    Edit Order
-  </button>
-</td>
-
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-
-      {/* Pagination */}
-      <div className="flex justify-between mt-4">
-        <button onClick={prePage} disabled={currentPage === 1}>
-          Previous
-        </button>
-        <button onClick={nextPage} disabled={currentPage === npage}>
-          Next
-        </button>
-      </div>
-
-      {/* View Order Particulars Modal */}
-      {modalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="bg-white p-5 rounded-lg shadow-lg">
-            <h2 className="text-lg font-semibold mb-4">Order Particulars</h2>
-            <table className="min-w-full text-sm text-left text-gray-500">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-200">
-                <tr>
-                  <th className="px-4 py-2">SKU Code</th>
-                  <th className="px-4 py-2">Desired Units</th>
-                  <th className="px-4 py-2">Fulfilled Units</th>
-                </tr>
-              </thead>
-              <tbody>
-                {selectedOrder?.listOfProducts.map((product, index) => (
-                  <tr key={index}>
-                    <td className="px-4 py-2 text-center">{product.skuCode}</td>
-                    <td className="px-4 py-2 text-center">{product.quantity}</td>
-                    <td className="px-4 py-2 text-center">{product.fulfilledQuantity}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <button
-              onClick={closeModal}
-              className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Edit Order Modal */}
-      {editModalOpen && (
-  <div className="fixed inset-0 flex items-center justify-center z-50">
-    <div className="bg-white p-5 rounded-lg shadow-lg">
-      <h2 className="text-lg font-semibold mb-4">Edit Order</h2>
-      <form onSubmit={handleSaveChanges}>
-        {/* Order ID */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium">Order ID</label>
-          <input
-            type="text"
-            name="orderId"
-            value={editOrderData.orderId}
-            onChange={handleEditChange}
-            className="border border-gray-300 rounded-lg w-full px-2 py-1"
-          />
-        </div>
-
-        {/* Order Title */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium">Order Title</label>
-          <input
-            type="text"
-            name="orderTitle"
-            value={editOrderData.orderTitle}
-            onChange={handleEditChange}
-            className="border border-gray-300 rounded-lg w-full px-2 py-1"
-          />
-        </div>
-
-        {/* Tracking Number */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium">Tracking Number</label>
-          <input
-            type="text"
-            name="trackingNumber"
-            value={editOrderData.trackingNumber}
-            onChange={handleEditChange}
-            className="border border-gray-300 rounded-lg w-full px-2 py-1"
-          />
-        </div>
-
-        {/* Remarks */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium">Remarks</label>
-          <input
-            type="text"
-            name="remarks"
-            value={editOrderData.remarks}
-            onChange={handleEditChange}
-            className="border border-gray-300 rounded-lg w-full px-2 py-1"
-          />
-        </div>
-
-        {/* Checkbox for Shipped Status */}
-        <div className="mb-4 flex items-center">
-          <input
-            type="checkbox"
-            name="status"
-            checked={editOrderData.status === 'shipped'}
-            onChange={(e) =>
-              setEditOrderData((prev) => ({
-                ...prev,
-                status: e.target.checked ? 'shipped' : 'open',
-              }))
-            }
-            className="w-4 h-4 text-blue-600 border-gray-300 rounded"
-          />
-          <label className="ml-2 text-sm font-medium">
-            Mark as Shipped
-          </label>
-        </div>
-
-        {/* Buttons Section */}
-        <div className="flex justify-between mt-4">
-          <div>
-            <button
-              type="button"
-              onClick={closeEditModal}
-              className="mr-2 bg-red-500 text-white px-4 py-2 rounded-lg"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-            >
-              Save Changes
-            </button>
-          </div>
-
-          {/* Delete Order Button */}
-          <button
-            type="button"
-            onClick={() => handleDeleteOrder(editOrderData.orderInternalId)}
-            className="bg-red-700 text-white px-4 py-2 rounded-lg hover:bg-red-800 transition duration-200"
-          >
-            Delete Order
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-)}
-
-
-    </div>
+      <RightSidebar
+        isOpen={isSidebarOpen}
+        onClose={closeSidebar} // Close the sidebar
+      >
+        {sidebarContent}
+      </RightSidebar>
+    </>
   );
 };
 

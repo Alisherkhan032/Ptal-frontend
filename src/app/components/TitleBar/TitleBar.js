@@ -10,7 +10,7 @@ const TitleBar = ({ title, buttons = [] }) => {
 
       {/* Buttons on the right */}
 
-      <div className="flex space-x-4">
+      <div className="flex items-center justify-center space-x-4">
         {buttons.map((button, index) => button)}
       </div>
     </div>

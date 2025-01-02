@@ -20,11 +20,15 @@ const CustomDatePicker = ({ onDateChange, label }) => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DatePicker
-        label={label || 'Select date'}
+        label="Select date"
+        onChange={onDateChange}
         value={value}
-        onChange={handleDateChange}
-        renderInput={(params) => <TextField {...params} />}
-      />
+        slotProps={{
+          textField: {
+            size: 'small', // Applying the small size to the TextField
+          },
+        }}
+      />  
     </LocalizationProvider>
   );
 };

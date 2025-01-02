@@ -13,6 +13,8 @@ import {
 } from "../../Actions/rtoOrderActions";
 import { PrimaryButton } from "@/app/components/ButtonComponent/ButtonComponent";
 import TitleBar from "@/app/components/TitleBar/TitleBar";
+import StatusBar from "@/app/components/StatusBar/StatusBar";
+import RTOInwardReturn from "@/app/components/RTOInwardReturn/RTOInwardReturn";
 
 const page = () => {
 
@@ -36,6 +38,19 @@ const page = () => {
     getAllRtoOrderDetails();
   }, []);
 
+  const { orders } = useSelector((state) => state.rtoOrder);
+
+  const calculateStatusBarData = (poData) => {
+    const totalOrders = poData.length;
+    return [
+      { value: totalOrders, heading: "Total RTO Orders" },
+    ];
+  };
+
+  const statusBarData = calculateStatusBarData(orders);
+
+
+
   const buttons = [
     <PrimaryButton
       title="Inward Return"
@@ -50,6 +65,9 @@ const page = () => {
         <div className="w-full max-w-full mb-4">
           <TitleBar title="Returns" buttons={buttons} />
         </div>
+        <div className="w-full max-w-full mb-5">
+          <StatusBar data={statusBarData} />
+        </div>
 
         <div className="flex w-full max-w-full mb-6 scrollbar-none">
           <div className="flex-1 rounded-lg  bg-gray-1 overflow-y-auto scrollbar-none">
@@ -63,7 +81,7 @@ const page = () => {
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)} // Close the sidebar
       >
-        <h1>Hi</h1>
+        <RTOInwardReturn onCancel={() => setIsSidebarOpen(false)} />
       </RightSidebar>
     </div>
   );

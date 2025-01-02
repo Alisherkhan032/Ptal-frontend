@@ -8,13 +8,15 @@ const getButtonSizeClasses = (size) => {
     case "small-medium":
       return "h-7 text-sm px-5 py-2 min-w-28 max-w-full"; // Added max-w-full
     case "medium":
-      return "h-9 text-sm px-6 py-2 min-w-36 max-w-full"; // Added max-w-full
+      return "h-9 text-sm px-6 py-3 min-w-36 max-w-full"; // Added max-w-full
     case "large":
       return "h-10 text-base px-8 py-3 min-w-36 max-w-full"; // Added max-w-full
     case "full":
       return "text-sm px-4 py-2 w-full"; // Full width
+    case "titleBar":
+      return "text-sm px-4 py-3"; // Full width
     default:
-      return "h-9 text-sm py-2 px-4 max-w-full"; // Added max-w-full
+      return "text-sm px-4 py-3"; // Added max-w-full
   }
 };
 
@@ -30,6 +32,8 @@ const Button = ({
   width,
   disabled,
   hoverColor,
+  border,
+  ...props  
 }) => {
   // Get the appropriate button size classes
   const sizeClasses = getButtonSizeClasses(size);
@@ -37,10 +41,11 @@ const Button = ({
   return (
     <button
       onClick={onClick}
-      className={`flex items-center justify-center text-left break-words whitespace-normal ${bgColor} ${radius} ${color} ${sizeClasses} ${fontWeight} ${width} ${
+      className={`flex items-center justify-center text-left break-words whitespace-normal ${border} ${bgColor} ${radius} ${color} ${sizeClasses} ${fontWeight} ${width} ${
         disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
       } ${hoverColor && !disabled ? hoverColor : ""}`}
       disabled={disabled}
+      {...props}
     >
       {title}
     </button>
@@ -69,6 +74,18 @@ export const SecondaryButton = ({ size, ...props }) => (
     fontWeight="font-medium"
     size={size}
     hoverColor="hover:bg-[#E0DFFF]"
+    {...props}
+  />
+);
+
+export const CloseWhite = ({ size, ...props }) => (
+  <Button
+    bgColor="bg-white"
+    color="text-dark-4"
+    radius="rounded-xl"
+    fontWeight="font-medium"
+    border="border-[1.5px] border-stroke"
+    size={size}
     {...props}
   />
 );
@@ -102,12 +119,12 @@ export const FulfilledGreen = ({ size = "small-medium", title, ...props }) => (
 // Default Status Button with predefined styling
 export const DefaultStatus = ({ size = "full", title, ...props }) => (
   <Button
-    bgColor="bg-purple-light-4"
-    color="text-purple-dark"
+    bgColor="bg-green"
+    color="text-white"
     radius="rounded-xl"
     fontWeight="font-normal"
     size={size}
-    title={<span className="break-words whitespace-normal">{title}</span>}
+    title={<span className="break-words ">{title}</span>}
     {...props}
   />
 );

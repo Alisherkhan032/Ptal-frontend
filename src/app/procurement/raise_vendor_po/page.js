@@ -37,11 +37,8 @@
       <PrimaryButton
         title="Raise Vendor PO"
         onClick={() => setIsSidebarOpen(true)}
-        width="w-auto"
-        bgColor = 'bg-primary'
-      >
-        Raise Vendor PO
-      </PrimaryButton>,
+        size='full'
+      />
     ];
 
     return (

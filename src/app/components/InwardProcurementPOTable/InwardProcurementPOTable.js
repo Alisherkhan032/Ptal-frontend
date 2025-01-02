@@ -350,6 +350,7 @@ const InwardProcurementPOTable = () => {
   const customQrCodeDownloadProps = [
     {
       label : ICONS.qrCode,
+      condition: null,
       action : (po) => generateBatchSticker(po?._id),
     }
   ]

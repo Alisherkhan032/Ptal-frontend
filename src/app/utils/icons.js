@@ -30,6 +30,8 @@ import InwardPo from "@/app/utils/svg/InwardPo.svg";
 import OutwardPo from "@/app/utils/svg/OutwardPo.svg";
 import FulfilledPo from "@/app/utils/svg/FulfilledPo.svg";
 import QcFail from "@/app/utils/svg/QcFail.svg";
+import Settings from "@/app/utils/svg/Settings.svg";
+import Update from "@/app/utils/svg/Update.svg";
 
 export const ICONS = {
   executive: <ExecutiveDash width={15} height={15} />,
@@ -43,7 +45,7 @@ export const ICONS = {
   admin: <Admin width={15} height={15} />,
   custom: <CustomOrder width={15} height={15} />,
   rto: <Return width={15} height={15} />,
-  settings: <Cog8ToothIcon className="size-6 text-[#8899A8]" />,
+  settings: <Settings width={15} height={15} />,
   rawMaterial: <RawMaterial width={15} height={15} />,
   packaging: <Packaging width={15} height={15} />,
   download: <ArrowDownTrayIcon className="h-4 w-4 text-dark-4" />,
@@ -56,6 +58,7 @@ export const ICONS = {
   outwardPo : <OutwardPo className="h-6 w-6 text-dark-4" />,
   fulfilledPo : <FulfilledPo className="h-6 w-6 text-dark-4" />,
   qcFail : <QcFail className="h-6 w-6 text-dark-4" />,
+  update : <Update className="h-6 w-6 text-dark-4" />,
 }
 
 
@@ -82,5 +85,8 @@ export const ColoredIcon = ({
     className: `${iconSize} ${
       isActive ? `text-[${activeColor}]` : `text-[${inactiveColor}]`
     }`,
+    style: {
+      color: isActive ? activeColor : inactiveColor, // Fallback for unsupported classes
+    },
   });
 };

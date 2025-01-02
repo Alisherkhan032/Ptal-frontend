@@ -15,6 +15,7 @@ import {
   PrimaryButton,
 } from "@/app/components/ButtonComponent/ButtonComponent";
 import PoFilterBar from "../PoFilterBar/PoFilterBar";
+import DynamicTableInsideSidebar from "../DynamicTableInsideSidebar/DynamicTableInsideSidebar";
 
 const ViewDetailComponent = ({
   productName,
@@ -237,6 +238,37 @@ const EngravingInventoryLevel = () => {
     setSelectedPo(null);
   };
 
+  console.log('selectedPo', selectedPo);
+
+  const headingsInsideSidebar = [
+    {
+      label: "In Progress QR Code",
+      renderCell: (row) => row?.in_progress_qr || "N/A",
+    },
+    {
+      label: "Engraved QR Code",
+      renderCell: (row) => row?.engraved_and_outwarded_qr || "N/A",
+    },
+  ];
+
+  function createDataArray(selectedPo) {
+    // Extract the arrays
+    const engravedAndOutwarded =
+      selectedPo?.engraved_and_outwarded
+      || [];
+    const inProgress =
+      selectedPo?.in_progress || [];
+
+    // Calculate the maximum length of the two arrays
+    const maxLength = Math.max(engravedAndOutwarded.length, inProgress.length);
+
+    // Create the data array
+    return Array.from({ length: maxLength }, (_, index) => ({
+      engraved_and_outwarded_qr: engravedAndOutwarded[index] || "N/A",
+      in_progress_qr: inProgress[index] || "N/A",
+    }));
+  }
+
   return (
     <>
       <PoFilterBar
@@ -249,12 +281,19 @@ const EngravingInventoryLevel = () => {
 
       <RightSidebar isOpen={isSidebarOpen} onClose={closeSidebar}>
         {sidebarType === "viewDetail" && (
-          <ViewDetailComponent
-            productName={selectedPo?.product_name}
-            inProgress={selectedPo?.in_progress || []}
-            engravedAndOutwarded={selectedPo?.engraved_and_outwarded || []}
-            handleCancel={closeSidebar}
-          />
+          <>
+            <h2 className="text-base font-semibold text-[#111928] mb-2 ml-2">
+            QR Codes for Order
+            </h2>
+            <p className="text-sm font-normal text-[#4B5563] mb-6 ml-2">
+            View the Inventory and Engraving QR Codes
+            </p>
+            <DynamicTableInsideSidebar
+              headings={headingsInsideSidebar}
+              rows={createDataArray(selectedPo) || []}
+              handleCancel={closeSidebar}
+            />
+          </>
         )}
       </RightSidebar>
     </>

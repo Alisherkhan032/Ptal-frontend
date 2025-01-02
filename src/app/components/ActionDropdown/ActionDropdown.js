@@ -12,7 +12,7 @@ const ActionDropdown = ({ po, actions, customElement }) => {
   };
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between gap-x-2">
       <select
         className="bg-purple-light-5 min-w-44 cursor-pointer text-primary text-left font-medium rounded-2xl appearance-none text-sm px-3 py-2.5"
         value={selectedOption}
@@ -34,19 +34,22 @@ const ActionDropdown = ({ po, actions, customElement }) => {
         })}
       </select>
 
-      {
-        customElement && (
-          <div className="cursor-pointer">
-            {customElement.map((elem, idx) =>{
-              return (
-                <div key={idx} onClick={()=>elem.action(po  )} >
+      {customElement && (
+        <div className="cursor-pointer">
+          {customElement.map((elem, idx) => {
+            // Same condition check as actions
+            const isElementVisible =
+              elem.condition === null || elem.condition()(po);
+            return (
+              isElementVisible && (
+                <div key={idx} onClick={() => elem.action(po)}>
                   {elem.label}
                 </div>
-              );
-            })}
-          </div>
-        )
-      }
+              )
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

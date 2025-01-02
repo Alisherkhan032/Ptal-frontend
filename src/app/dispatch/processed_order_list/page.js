@@ -1,21 +1,27 @@
-'use client';
-import React, { useEffect } from 'react';
-import Sidebar from '@/app/components/Sidebar/Sidebar';
-import { items } from '@/app/utils/sidebarItems';
-import { useDispatch, useSelector } from 'react-redux';
-import PageTitle from '@/app/components/PageTitle/PageTitle';
-import ProcessedOrderTable from '@/app/components/ProcessedOrderTable/ProcessedOrderTable';
-import { orderDetailsService } from '@/app/services/orderDetailsService';
+"use client";
+import React, { useEffect, useState } from "react";
+import Sidebar from "@/app/components/Sidebar/Sidebar";
+import { items } from "@/app/utils/sidebarItems";
+import { useDispatch, useSelector } from "react-redux";
+import ProcessedOrderTable from "@/app/components/ProcessedOrderTable/ProcessedOrderTable";
+import { orderDetailsService } from "@/app/services/orderDetailsService";
 import {
   getAllOrderDetailsRequest,
   getAllOrderDetailsSuccess,
   getAllOrderDetailsFailure,
-} from '../../Actions/orderDetailsActions';
-
+} from "../../Actions/orderDetailsActions";
+import NavigationBar from "@/app/components/NavigationBar/NavigationBar";
+import TitleBar from "@/app/components/TitleBar/TitleBar";
+import { PrimaryButton } from "@/app/components/ButtonComponent/ButtonComponent";
+import RightSidebar from "@/app/components/RaisePoFormSideBar/RaisePoFormSideBar";
+import CreateEngravingOrderPoComponent from "@/app/components/CreateEngravingOrderPoComponent/CreateEngravingOrderPoComponent";
+import ProcessOrders from '@/app/components/ProcessOrders/ProcessOrders';
+import InwardAmazonCSV from '@/app/components/InwardAmazonCsv/InwardAmazonCsv';
+import ProcessAmazonOrders from '@/app/components/ProcessAmazonOrders/ProcessAmazonOrders';
 
 const page = () => {
- 
-
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [sidebarContent, setSidebarContent] = useState(null);
   const dispatch = useDispatch();
 
   const getAllOrderDetails = async () => {
@@ -34,20 +40,113 @@ const page = () => {
     getAllOrderDetails();
   }, []);
 
+  const generateNavItems = () => {
+    const Team = items.find((item) => item.label === "Dispatch");
+
+    if (Team && Team.subItems) {
+      return Team.subItems.map((subItem) => ({
+        name: subItem.label,
+        path: subItem.path,
+        // icon: subItem.iconKey,
+      }));
+    }
+
+    return [];
+  };
+
+  const navItems = generateNavItems();
+
+  const buttons = [
+    
+    <PrimaryButton
+      title="Inward Amazon Order CSV"
+      onClick={() => {
+        setIsSidebarOpen(true)
+        handleSidebarContent("inwardAmazonOrderCsv");
+      }}
+      size="titleBar"
+    />,
+    <PrimaryButton
+      title="Process Amazon Orders"
+      onClick={() => {
+        setIsSidebarOpen(true)
+        handleSidebarContent("processAmazonOrders");
+      }}
+      size="titleBar"
+    />,
+    <PrimaryButton
+      title="Process Order"
+      onClick={() => {
+        setIsSidebarOpen(true)
+        handleSidebarContent("processOrder");
+      }}
+      size="titleBar"
+    />,
+    <PrimaryButton
+      title="Raise Engraving PO"
+      onClick={() => {
+        setIsSidebarOpen(true)
+        handleSidebarContent("raiseEngravingPo");
+      }}
+      size="titleBar"
+    />,
+  ];
+
+  const handleSidebarContent = (actionType) => {
+    switch (actionType) {
+      case "processOrder":
+        setSidebarContent(<ProcessOrders onCancel={() => setIsSidebarOpen(false)} />);
+        setIsSidebarOpen(true);
+        break;
+      case "raiseEngravingPo":
+        setSidebarContent(
+          <CreateEngravingOrderPoComponent onCancel={() => setIsSidebarOpen(false)} />
+        );
+        setIsSidebarOpen(true);
+        break;
+      case "inwardAmazonOrderCsv":
+        setSidebarContent(
+          <InwardAmazonCSV onCancel={() => setIsSidebarOpen(false)} />
+        );
+        setIsSidebarOpen(true);
+        break;
+      case "processAmazonOrders":
+        setSidebarContent(
+          <ProcessAmazonOrders onCancel={() => setIsSidebarOpen(false)} />
+        );
+        setIsSidebarOpen(true);
+        break;
+      default:
+        setIsSidebarOpen(false);
+    }
+    // Open the sidebar
+  };
+
   return (
-    <div className="flex w-full h-screen  flex-row gap-4">
-      <div className="w-[23vw]">
-        <Sidebar items={items} />
+    <div className="relative w-full h-full overflow-scroll scrollbar-none bg-[#f9fafc]">
+      <div className="relative z-10 flex flex-col items-center overflow-scroll scrollbar-none px-4 py-2">
+        <div className="w-full max-w-full mb-4">
+          <TitleBar title="Dispatch" buttons={buttons} />
+        </div>
+
+        <div className="w-full max-w-full mb-5">
+          <NavigationBar navItems={navItems} />
+        </div>
+
+        <div className="flex w-full max-w-full mb-6 scrollbar-none">
+          <div className="flex-1 rounded-lg  bg-gray-1 overflow-y-auto scrollbar-none">
+            <ProcessedOrderTable />
+          </div>
+        </div>
       </div>
 
-      <div className="flex flex-col w-[77vw] ">
-        <div>
-          <PageTitle pageTitle={'View Fulfilled Order Details'} />
-        </div>
-        <div className="mt-[0.3vw]  scrollWidth w-[74vw] min-w-[74vw] max-w-[74vw]  overflow-y-scroll min-h-[70vh] h-[70vh] max-h-[70vh]">
-        <ProcessedOrderTable />
-        </div>
-      </div>
+      {/* (Right Sidebar) */}
+      <RightSidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)} // Close the sidebar
+      >
+        {sidebarContent}
+      </RightSidebar>
     </div>
   );
 };

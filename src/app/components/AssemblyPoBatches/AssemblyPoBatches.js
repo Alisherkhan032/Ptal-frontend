@@ -34,7 +34,7 @@ const AssemblyPoBatches = ({ po, handleCancel }) => {
       <div className="absolute bottom-0 left-0 w-full border border-t-stroke  bg-white p-2">
         <div className="flex gap-x-2">
           <div className="flex-1">
-            <SecondaryButton title="Close" height="h-12" onClick={handleCancel} />
+            <SecondaryButton title="Close" size='full' onClick={handleCancel} />
           </div>
         </div>
       </div>

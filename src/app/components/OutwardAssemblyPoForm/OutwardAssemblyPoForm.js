@@ -251,7 +251,6 @@ const OutwardForm = ({ poId, handleCancel }) => {
               <div className="flex-1">
                 <SecondaryButton
                   title="Cancel"
-                  height="h-12"
                   onClick={handleCancel}
                   size='full'
                 />

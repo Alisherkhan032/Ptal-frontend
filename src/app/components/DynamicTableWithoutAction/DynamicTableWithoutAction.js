@@ -104,26 +104,27 @@ const DynamicTable = ({ headings, rows }) => {
 
                   {/* Dynamic columns */}
                   {Object.keys(headings).map(
-                    (key, colIndex) =>
-                      key !== "checkbox" && (
-                        <td
-                          key={colIndex}
-                          className={`px-4 py-2 min-w-40 max-w-80 text-left text-dark font-medium ${
-                            key === 'status' ? '' : ''
-                          } ${
-                            headings[key].isSticky
-                              ? `${headings[key].stickyClassRow} `
-                              : ""
-                          }`}
-                        >
-                          <div className="min-w-40 max-w-80">
-                            {headings[key].renderCell
-                              ? headings[key].renderCell(row, rowIndex)
-                              : row[key] || "N/A"}
-                          </div>
-                        </td>
-                      )
-                  )}
+  (key, colIndex) =>
+    key !== "checkbox" && (
+      <td
+        key={colIndex}
+        className={`px-4 py-2 min-w-40 max-w-80 font-medium ${
+          key === "Status" ? "text-center" : "text-left"
+        } text-dark ${
+          headings[key].isSticky
+            ? `${headings[key].stickyClassRow} `
+            : ""
+        }`}
+      >
+        <div className="min-w-40 max-w-80">
+          {headings[key].renderCell
+            ? headings[key].renderCell(row, rowIndex)
+            : row[key] || "N/A"}
+        </div>
+      </td>
+    )
+)}
+
                 </tr>
               ))
             ) : (
