@@ -1,7 +1,7 @@
 // Local Database - 
-export const BASE_URL = 'https://ptal-backend.onrender.com/api/v1';
+// export const BASE_URL = 'https://ptal-backend.onrender.com/api/v1';
 // Staging Database - 
-//export const BASE_URL ='https://staging-backend.ptal.filflo.in/api/v1';
+export const BASE_URL ='https://staging-backend.ptal.filflo.in/api/v1';
 // Prod Database -
 // export const BASE_URL = "https://urchin-app-44s76.ondigitalocean.app/api/v1";
 
